@@ -23,22 +23,36 @@ if(!reduced) document.querySelectorAll('.rv').forEach(el=>{ if(el.getBoundingCli
 (function(){ const M=[['Harvested per day','t',7,15.9,1],['Days per hectare','days',7.4,3.3,1,1],['Cost per hectare','€',6195,5576,0,1],['Operating hours','h',10,20,0]];
   $('wp-mult').innerHTML=M.map(([t,u,a,b,d,lo])=>{ const mx=Math.max(a,b), f=x=>u==='€'?'€'+x.toLocaleString('en-US'):fmt(x,d)+' '+u;
     return `<div class="m"><h5>${t}<small>${lo?'lower is better':'higher is better'}</small></h5><div class="bx pt" role="img" aria-label="Pluk-o-Trak ${f(a)}" style="width:${(a/mx*100).toFixed(1)}%">${f(a)}</div><div class="bx tu" role="img" aria-label="Tully ${f(b)}" style="width:${(b/mx*100).toFixed(1)}%">${f(b)}</div></div>`; }).join(''); })();
-// ---------------- calculator (white-paper model)
-const CW={mass:0.155,yield:51.87751,/* t/ha, calibrated so the default plan reproduces the white paper: 227,909 revenue */ days:133,op:6251,svc:26000,cost:260000};
-function calc(){ const n=+$('wp-c-arms').value, s=+$('wp-c-sec').value, h=+$('wp-c-hrs').value, pr=+$('wp-c-price').value;
+// ---------------- calculator (white-paper model), two systems
+// yield calibrated so the default plan reproduces the white paper's €227,909 revenue; maintenance = 10 % of the system cost (€26,000 at €260,000)
+const CW={mass:0.155,yield:51.87751,days:133,op:6251,maint:0.10};
+const PLANS={h:{arms:8,sec:5.6,hrs:20,price:5576,cost:260000,sub:'The system in development: off-the-shelf cobots picking at human speed per arm.',
+    note:'White-paper assumptions: 155 g per apple, about 52 t per hectare, 133 operating days a season, €6,251 operation cost, maintenance and machine cost of 10 % of the system cost (€26,000 at €260,000).'},
+  o:{arms:8,sec:2.0,hrs:20,price:5576,cost:182000,sub:'In-house custom actuators and manipulators: about 30 % lower system cost and roughly 2 s per apple per arm.',
+    note:'White paper: about 30 % lower system cost, almost triple the output at 114 ha a season and about €633k seasonal revenue per robot. Same yield, operating days, operation cost and 10 % maintenance as the human-level system.'}};
+let plan='h';
+function setPlan(k){ plan=k; const P=PLANS[k]; $('wp-c-arms').value=P.arms; $('wp-c-sec').value=P.sec; $('wp-c-hrs').value=P.hrs; $('wp-c-price').value=P.price; $('wp-c-cost').value=P.cost;
+  $('wp-calc-sub').textContent=P.sub; $('wp-calc-note').textContent=P.note;
+  [['h','wp-tab-h'],['o','wp-tab-o']].forEach(([kk,id])=>{ const b=$(id); b.setAttribute('aria-selected',kk===k?'true':'false'); b.tabIndex=kk===k?0:-1; });
+  calc(); }
+function calc(){ const n=+$('wp-c-arms').value, s=+$('wp-c-sec').value, h=+$('wp-c-hrs').value, pr=+$('wp-c-price').value, cost=+$('wp-c-cost').value;
   $('wp-o-arms').textContent=n; $('wp-o-sec').textContent=s.toFixed(1)+' s'; $('wp-o-hrs').textContent=h+' h'; $('wp-o-price').textContent=eur(pr);
-  const sys=s/n, tday=h*3600/sys*CW.mass/1000, dha=CW.yield/tday, ha=CW.days/dha, rev=ha*pr, gp=rev-CW.op-CW.svc, mg=gp/rev;
+  $('wp-o-cost').textContent=eur(cost)+(cost<260000?' (−'+fmt((1-cost/260000)*100,0)+' %)':'');
+  const sys=s/n, tday=h*3600/sys*CW.mass/1000, dha=CW.yield/tday, ha=CW.days/dha, rev=ha*pr, mt=cost*CW.maint, gp=rev-CW.op-mt, mg=gp/rev;
   const vs=(good,txt)=>`<span class="vs ${good?'good':'bad'}">${txt}</span>`;
   const o=[[fmt(sys,2)+' s','per apple, whole machine',vs(sys<=0.9,sys<=0.9?'faster than a team (0.9 s)':'slower than a team (0.9 s)')],
     [fmt(tday,1)+' t','harvested per day',vs(tday>=7,fmt(tday/7,1)+'× a Pluk-o-Trak team')],
     [fmt(dha,1),'days per hectare',vs(dha<=7.4,'manual: 7.4 days')],
     [fmt(ha,0)+' ha','per season',''],
-    [eur(rev),'revenue per season',''],
-    [eur(gp),'gross profit per season',vs(mg>=0.5,fmt(mg*100,0)+' % margin'+(gp>0?' · ROI '+fmt(CW.cost/gp,1)+' years':''))]];
+    [eur(rev),'revenue per season','<span class="vs">costs '+eur(CW.op+mt)+' a season</span>'],
+    [eur(gp),'gross profit per season',vs(mg>=0.5,fmt(mg*100,0)+' % margin'+(gp>0?' · ROI '+fmt(cost/gp,1)+' years':''))]];
   $('wp-calc-out').innerHTML=o.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span>${x[2]}</div>`).join(''); }
-['wp-c-arms','wp-c-sec','wp-c-hrs','wp-c-price'].forEach(id=>$(id).addEventListener('input',calc));
-$('wp-calc-reset').addEventListener('click',()=>{ $('wp-c-arms').value=8; $('wp-c-sec').value=5.6; $('wp-c-hrs').value=20; $('wp-c-price').value=5576; calc(); });
-calc();
+['wp-c-arms','wp-c-sec','wp-c-hrs','wp-c-price','wp-c-cost'].forEach(id=>$(id).addEventListener('input',calc));
+$('wp-tab-h').addEventListener('click',()=>setPlan('h')); $('wp-tab-o').addEventListener('click',()=>setPlan('o'));
+$('wp-tab-h').addEventListener('keydown',e=>{ if(e.key==='ArrowRight'){ setPlan('o'); $('wp-tab-o').focus(); } });
+$('wp-tab-o').addEventListener('keydown',e=>{ if(e.key==='ArrowLeft'){ setPlan('h'); $('wp-tab-h').focus(); } });
+$('wp-calc-reset').addEventListener('click',()=>setPlan(plan));
+setPlan('h');
 // ---------------- allocation
 (function(){ const A=[['Team and salaries',64,'var(--accent)'],['Prototyping and field testing',16,'var(--leaf)'],['External services',10,'var(--sky)'],['Company operations',8,'var(--muted)']];
   $('wp-stack').innerHTML=A.map(a=>`<i style="width:${a[1]}%;background:${a[2]}">${a[1]} %</i>`).join('');

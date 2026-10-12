@@ -269,3 +269,10 @@ svg.dg .tick{fill:none;stroke:var(--leaf);stroke-width:2}
 .ladder.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:900px){ .sum.two,.ladder.three{grid-template-columns:minmax(0,1fr)} }
 .quote{margin:14px 0;padding:4px 0 4px 18px;border-left:3px solid var(--accent);font-family:var(--display);font-size:19px;line-height:1.4;color:var(--ink)}
+
+.tabs{display:inline-flex;gap:4px;padding:4px;background:var(--sunk);border:1px solid var(--line);border-radius:8px;margin-right:auto;margin-left:14px}
+.tabs button{font-family:var(--display);font-size:14px;font-weight:600;color:var(--muted);background:transparent;border:0;border-radius:5px;padding:7px 12px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px var(--shade)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (max-width:820px){ .tabs{margin-left:0;order:3;width:100%} .tabs button{flex:1} }
+.out{align-content:start}

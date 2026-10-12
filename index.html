@@ -15,7 +15,7 @@
 <link rel="preload" href="fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts.05b06388.css">
-<link rel="stylesheet" href="assets/site.a7804d0a.css">
+<link rel="stylesheet" href="assets/site.d599bf26.css">
 </head>
 <body>
 <nav class="topbar" aria-label="Sections">
@@ -181,14 +181,21 @@
     </div>
 
     <div class="card rv" style="margin-top:40px">
-      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:baseline"><h4>Try the model</h4><button class="btn" id="wp-calc-reset" type="button">Reset to the white-paper plan</button></div>
-      <div class="calc">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center"><h4 style="margin:0">Try the model</h4>
+        <div class="tabs" role="tablist" aria-label="System">
+          <button type="button" role="tab" id="wp-tab-h" aria-selected="true" aria-controls="wp-calc">Human-level system</button>
+          <button type="button" role="tab" id="wp-tab-o" aria-selected="false" aria-controls="wp-calc">Fully optimised system</button>
+        </div>
+        <button class="btn" id="wp-calc-reset" type="button">Reset to the white-paper plan</button></div>
+      <p class="small" id="wp-calc-sub" style="margin:10px 0 0">The system in development: off-the-shelf cobots picking at human speed per arm.</p>
+      <div class="calc" id="wp-calc" role="tabpanel" style="margin-top:18px">
         <div class="in">
           <div class="f"><label for="wp-c-arms">Robotic arms</label><output id="wp-o-arms"></output><input id="wp-c-arms" type="range" min="4" max="16" step="1" value="8"></div>
-          <div class="f"><label for="wp-c-sec">Seconds per apple, per arm</label><output id="wp-o-sec"></output><input id="wp-c-sec" type="range" min="3" max="9" step="0.1" value="5.6"></div>
+          <div class="f"><label for="wp-c-sec">Seconds per apple, per arm</label><output id="wp-o-sec"></output><input id="wp-c-sec" type="range" min="2" max="9" step="0.1" value="5.6"></div>
           <div class="f"><label for="wp-c-hrs">Operating hours per day</label><output id="wp-o-hrs"></output><input id="wp-c-hrs" type="range" min="8" max="24" step="1" value="20"></div>
           <div class="f"><label for="wp-c-price">Price per hectare to the farmer</label><output id="wp-o-price"></output><input id="wp-c-price" type="range" min="4000" max="8000" step="1" value="5576"></div>
-          <p class="small" style="margin:0;font-size:13.5px">The white paper's own assumptions: 155 g per apple, about 52 t per hectare, 133 operating days a season, €6,251 operation cost and €26,000 maintenance and machine cost per season, and a €260,000 system for the payback.</p>
+          <div class="f"><label for="wp-c-cost">Robotic system cost</label><output id="wp-o-cost"></output><input id="wp-c-cost" type="range" min="150000" max="300000" step="1000" value="260000"></div>
+          <p class="small" id="wp-calc-note" style="margin:0;font-size:13.5px"></p>
         </div>
         <div class="out" id="wp-calc-out"></div>
       </div>
@@ -725,7 +732,7 @@
           </tbody></table></div>
       </div>
       <div class="rv">
-        <h3 style="margin-top:0">Advisors</h3>
+        <h3 style="margin-top:0">Advisor</h3>
         <div style="display:grid;gap:18px">
           <div class="person"><span class="role">Apple automation and grower requirements</span><h4>Dr. Ines Hanrahan</h4><p>Executive Director of the Washington Tree Fruit Research Commission, with more than ten years in tree-fruit robotics research and grower needs. Challenges our picking and fruit-quality benchmarks and guides field trials.</p></div>
         </div>
@@ -736,7 +743,7 @@
 
 <section class="ch" id="investment">
   <div class="wrap">
-    <header><span class="eyebrow"><b>08</b> · Investment</span><h2>Capital to commercialisation</h2></header>
+    <header><span class="eyebrow"><b>08</b> · Investment</span><h2>Proving performance in the field</h2></header>
     <div class="split">
       <div class="rv">
         <div class="big">€3.5M</div><p class="eyebrow" style="margin:10px 0 0">for 24 months and two growing seasons</p>
@@ -817,6 +824,6 @@
 <footer><div class="wrap">Tully · White paper, 2026. Simulation scenes run live in your browser; renderings are from the same simulation model.</div></footer>
 
 <script src="assets/sim.27db6302.js"></script>
-<script src="assets/site.96ea587d.js"></script>
+<script src="assets/site.720c8776.js"></script>
 </body>
 </html>
