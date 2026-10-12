@@ -42,6 +42,7 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }})
+          # Non-interactive CLI prints JSON; pull the deployment URL out of it
+          url=$(vercel deploy --prebuilt $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }} | grep -oE 'https://[^"]+\.vercel\.app' | head -1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Deployed to $url" >> "$GITHUB_STEP_SUMMARY"
