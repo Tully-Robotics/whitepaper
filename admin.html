@@ -64,7 +64,6 @@ td .m{color:var(--muted);font-size:13px;display:block}
 .ok{background:var(--leaf-tint);color:var(--leaf)}
 .bad{background:var(--accent-tint);color:var(--accent-ink)}
 .mst{background:var(--sunk);color:var(--ink2)}
-.wrn{background:var(--warn-tint);color:var(--warn)}
 .acts{display:flex;gap:6px;flex-wrap:wrap}
 .mt{margin-top:8px}
 .head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -113,7 +112,7 @@ section{margin-bottom:20px}
     </section>
   <section class="card" aria-labelledby="h-log">
     <div class="head"><h2 id="h-log">Sign-ins</h2><a href="/api/admin?view=csv">Download CSV</a></div>
-    <div class="tw"><table><thead><tr><th>Time</th><th>Name</th><th>Email</th><th>Firm</th><th>Password used</th><th>Location</th></tr></thead><tbody id="tLog"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Time</th><th>Person</th><th>Firm</th><th>Email</th><th>Result</th><th>Location</th></tr></thead><tbody id="tLog"></tbody></table></div>
   </section>
 </main>
 <script>
@@ -133,12 +132,12 @@ section{margin-bottom:20px}
     var inv=data.invites,log=data.logins;
     var active=inv.filter(function(i){return !i.revoked_at}).length;
     var ok=log.filter(function(l){return l.kind!=='failed'});
-    var people={};ok.forEach(function(l){people[(l.email||'').toLowerCase()]=1});
+    var people={};ok.forEach(function(l){if(l.invite_id)people[l.invite_id]=1});
     var s=$('stats');s.textContent='';
     s.appendChild(stat(active,'Active invites'));s.appendChild(stat(ok.length,'Recent sign-ins'));
-    s.appendChild(stat(Object.keys(people).length,'People signed in'));s.appendChild(stat(data.failed24||0,'Failed, last 24 h'));
+    s.appendChild(stat(Object.keys(people).length,'Invitees signed in'));s.appendChild(stat(data.failed24||0,'Failed, last 24 h'));
     var tb=$('tInv');tb.textContent='';
-    if(!inv.length){var tr=el('tr');var td=el('td','empty','No invites yet. Create the first one on the left.');td.colSpan=6;tr.appendChild(td);tb.appendChild(tr)}
+    if(!inv.length){var tr=el('tr');var td=el('td','empty','No invites yet. Create the first one above.');td.colSpan=6;tr.appendChild(td);tb.appendChild(tr)}
     inv.forEach(function(i){
       var tr=el('tr');
       var p=el('td');p.appendChild(el('b',null,i.name));p.appendChild(el('span','m',[i.firm,i.email].filter(Boolean).join(' · ')||'—'));if(i.note)p.appendChild(el('span','m',i.note));tr.appendChild(p);
@@ -158,16 +157,12 @@ section{margin-bottom:20px}
     log.forEach(function(l){
       var tr=el('tr');
       tr.appendChild(el('td','n',when(l.at)));
-      tr.appendChild(el('td',null,l.name||'—'));
-      var em=el('td',null,l.email||'—');
-      if(l.kind==='invite'&&l.invite_email&&l.email&&l.invite_email.toLowerCase()!==l.email.toLowerCase()){em.appendChild(document.createTextNode(' '));em.appendChild(el('span','pill wrn','not the invited email'))}
-      tr.appendChild(em);
+      tr.appendChild(el('td',null,l.name||(l.kind==='master'?'Master password':'—')));
       tr.appendChild(el('td',null,l.firm||'—'));
-      var via=el('td');
-      if(l.kind==='invite'){via.appendChild(el('span','pill ok','Invite'));via.appendChild(el('span','m',l.invite_name||''))}
-      else if(l.kind==='master')via.appendChild(el('span','pill mst','Master'));
-      else via.appendChild(el('span','pill bad','Wrong password'));
-      tr.appendChild(via);
+      tr.appendChild(el('td',null,l.email||'—'));
+      var res=el('td');
+      res.appendChild(l.kind==='invite'?el('span','pill ok','Invite'):l.kind==='master'?el('span','pill mst','Master'):el('span','pill bad','Wrong password'));
+      tr.appendChild(res);
       tr.appendChild(el('td',null,[l.city,l.country].filter(Boolean).join(', ')||'—'));
       tl.appendChild(tr);
     });
@@ -175,7 +170,7 @@ section{margin-bottom:20px}
   function load(){return api('GET').then(function(j){data=j;showErr('');render()}).catch(function(e){showErr(e.message)})}
   function message(name,pw){
     var first=(name||'').split(' ')[0]||'there';
-    return 'Hi '+first+',\n\nHere is your personal access to the Tully Robotics white paper:\n\n'+location.origin+'/\nPassword: '+pw+'\n\nYou will be asked for your name, email and firm, then the password. The password is for you only, so please do not forward it.\n\nBest regards,\n';
+    return 'Hi '+first+',\n\nHere is your personal access to the Tully Robotics white paper:\n\n'+location.origin+'/\nPassword: '+pw+'\n\nOpen the link and enter the password. It is for you only, so please do not forward it.\n\nBest regards,\n';
   }
   function showPw(name,pw){$('outFor').textContent=name;$('outPw').textContent=pw;$('outMsg').value=message(name,pw);$('out').hidden=false;$('out').scrollIntoView({block:'nearest',behavior:'smooth'})}
   function act(kind,i){

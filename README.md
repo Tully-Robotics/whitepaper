@@ -5,7 +5,7 @@ Static white-paper site behind a login gate, deployed on Vercel from GitHub (`.g
 ## How access works
 
 - `middleware.js` runs on Vercel's servers before any file is served. Without a valid session cookie, every page shows the login page and every asset returns 401. Only the login page, the fonts and `robots.txt` are public.
-- Visitors enter name, email and firm, then a password. `api/login.js` checks it, records the sign-in in Postgres (Neon) and sets a signed, HttpOnly cookie valid for 30 days.
+- Visitors only enter their password. `api/login.js` checks it, records the sign-in in Postgres (Neon) against the invite the password belongs to, and sets a signed, HttpOnly cookie valid for 30 days.
 - The **master password** always works and is the only way into `/admin`.
 - On `/admin` you create a personal password per person, see every sign-in (CSV export), revoke a password or issue a new one. Revoking takes effect on that person's next page load.
 - No password is in the frontend. Invite passwords are stored only as SHA-256 hashes, and raw IP addresses are never stored (a salted hash is kept for rate limiting: 8 failed attempts per 15 minutes per IP).

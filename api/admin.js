@@ -33,11 +33,14 @@ async function handleGet(request, sql) {
   const view = new URL(request.url).searchParams.get('view');
 
   if (view === 'csv') {
-    const rows = await sql`select l.at, l.kind, l.name, l.email, l.firm, i.name as invite_name, i.email as invite_email,
-        l.country, l.city, l.user_agent from tw_logins l left join tw_invites i on i.id = l.invite_id order by l.at desc`;
-    const head = ['time_utc', 'result', 'name', 'email', 'firm', 'invite_for', 'invite_email', 'country', 'city', 'browser'];
+    // Who signed in comes from the invite; name/email/firm on the sign-in row only exist for sign-ins made
+    // while the login form still asked for them (before 13 Oct 2026).
+    const rows = await sql`select l.at, l.kind, coalesce(i.name, l.name) as name, coalesce(i.firm, l.firm) as firm,
+        coalesce(i.email, l.email) as email, l.country, l.city, l.user_agent
+      from tw_logins l left join tw_invites i on i.id = l.invite_id order by l.at desc`;
+    const head = ['time_utc', 'result', 'person', 'firm', 'email', 'country', 'city', 'browser'];
     const lines = [head.join(',')].concat(rows.map((r) =>
-      [r.at, r.kind, r.name, r.email, r.firm, r.invite_name, r.invite_email, r.country, r.city, r.user_agent].map(csvCell).join(',')));
+      [r.at, r.kind, r.name, r.firm, r.email, r.country, r.city, r.user_agent].map(csvCell).join(',')));
     return new Response(lines.join('\r\n') + '\r\n', {
       headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': 'attachment; filename="tully-whitepaper-logins.csv"', 'cache-control': 'no-store' },
     });
@@ -47,8 +50,8 @@ async function handleGet(request, sql) {
       count(l.id)::int as logins, max(l.at) as last_login
     from tw_invites i left join tw_logins l on l.invite_id = i.id and l.kind = 'invite'
     group by i.id order by i.created_at desc`;
-  const logins = await sql`select l.id, l.at, l.kind, l.name, l.email, l.firm, l.country, l.city, l.invite_id,
-      i.name as invite_name, i.email as invite_email
+  const logins = await sql`select l.id, l.at, l.kind, coalesce(i.name, l.name) as name, coalesce(i.firm, l.firm) as firm,
+      coalesce(i.email, l.email) as email, l.country, l.city, l.invite_id
     from tw_logins l left join tw_invites i on i.id = l.invite_id order by l.at desc limit 300`;
   const [{ failed24 }] = await sql`select count(*)::int as failed24 from tw_logins where kind = 'failed' and at > now() - interval '24 hours'`;
   return json({ invites, logins, failed24 });

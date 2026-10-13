@@ -29,10 +29,6 @@ main{display:grid;place-items:center;padding:24px 16px 48px}
 .eyebrow b{color:var(--accent);font-weight:500}
 h1{font-family:var(--display);font-weight:700;font-stretch:108%;font-size:32px;line-height:1.08;letter-spacing:-.01em;margin:0 0 10px}
 .lead{color:var(--ink2);margin:0 0 22px}
-.steps{display:flex;gap:8px;margin:0 0 20px;padding:0;list-style:none;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.steps li{display:flex;align-items:center;gap:8px;flex:1;padding-top:8px;border-top:2px solid var(--line)}
-.steps li[aria-current="step"]{color:var(--ink);border-top-color:var(--accent)}
-.steps li.done{border-top-color:var(--leaf)}
 label,.lbl{display:block;font-family:var(--display);font-weight:600;font-size:14px;margin:0 0 6px;color:var(--ink)}
 .f{margin-bottom:14px}
 input{width:100%;font:inherit;font-family:var(--body);font-size:17px;color:var(--ink);background:var(--paper);border:1px solid var(--line2);border-radius:6px;padding:11px 12px;min-height:46px}
@@ -42,10 +38,7 @@ button{font-family:var(--display);font-weight:650;font-size:16px;border-radius:6
 .primary{width:100%;background:var(--ink);color:var(--paper);border:0;padding:12px 16px;margin-top:6px}
 .primary:hover{background:color-mix(in srgb,var(--ink) 86%,var(--accent))}
 .primary:disabled{opacity:.6;cursor:progress}
-.link{background:none;border:0;color:var(--sky);padding:0;min-height:0;font-family:var(--body);font-weight:400;font-size:15px;text-decoration:underline;text-underline-offset:3px}
 button:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
-.who{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:var(--sunk);border-radius:6px;padding:10px 12px;margin-bottom:14px;font-size:15px;color:var(--ink2)}
-.who b{color:var(--ink);font-weight:600}
 .err{background:var(--accent-tint);color:var(--accent-ink);border-radius:6px;padding:10px 12px;font-size:15px;margin:0 0 14px}
 .note{font-size:14px;color:var(--muted);margin:18px 0 0;line-height:1.5}
 .admin{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
@@ -57,22 +50,14 @@ button:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
   <div class="card">
     <span class="eyebrow"><b>●</b> By invitation</span>
     <h1>Tully White Paper</h1>
-    <p class="lead">An autonomous multi-arm apple harvester that cuts the stem. Please tell us who you are, then enter the password you received.</p>
+    <p class="lead">An autonomous multi-arm apple harvester that cuts the stem. Enter the password you received to open it.</p>
     <p class="admin" id="adm" hidden>Admin · sign in with the master password</p>
-    <ol class="steps"><li id="st1" aria-current="step">1 · Your details</li><li id="st2">2 · Password</li></ol>
     <p class="err" id="err" role="alert" hidden></p>
-    <form id="f1" novalidate>
-      <div class="f"><label for="name">Name</label><input type="text" id="name" name="name" autocomplete="name" required maxlength="120"></div>
-      <div class="f"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="200" inputmode="email"></div>
-      <div class="f"><label for="firm">Firm</label><input type="text" id="firm" name="firm" autocomplete="organization" required maxlength="160"></div>
-      <button class="primary" type="submit">Continue</button>
-    </form>
-    <form id="f2" hidden>
-      <div class="who"><span>Signing in as <b id="whoName"></b></span><button class="link" type="button" id="back">Edit</button></div>
-      <div class="f"><label for="pw">Password</label><input id="pw" class="pw" name="password" type="password" autocomplete="current-password" required maxlength="200" spellcheck="false" autocapitalize="characters"></div>
+    <form id="f">
+      <div class="f"><label for="pw">Password</label><input id="pw" class="pw" name="password" type="password" autocomplete="current-password" required maxlength="200" spellcheck="false" autocapitalize="characters" autofocus></div>
       <button class="primary" type="submit" id="go">Open the white paper</button>
     </form>
-    <p class="note">We record your name, email, firm and the time of each sign-in so we know who has access to this confidential document. Questions or no password? Write to the person who sent you the link.</p>
+    <p class="note">This document is confidential. No password, or it does not work? Write to the person who sent you the link.</p>
     <noscript><p class="err">This page needs JavaScript to sign in.</p></noscript>
   </div>
 </main>
@@ -80,36 +65,24 @@ button:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
 <script>
 (function(){
   var $=function(i){return document.getElementById(i)};
-  var f1=$('f1'),f2=$('f2'),err=$('err'),KEY='tully-login-details';
+  var err=$('err'),go=$('go'),LABEL=go.textContent;
   var admin=location.pathname==='/admin'||location.pathname==='/admin.html'||/[?&]admin=/.test(location.search);
   if(admin)$('adm').hidden=false;
-  try{var d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){$('name').value=d.name||'';$('email').value=d.email||'';$('firm').value=d.firm||''}}catch(e){}
+  try{localStorage.removeItem('tully-login-details')}catch(e){} // details saved by the earlier version of this page
   function show(msg){err.textContent=msg;err.hidden=!msg}
-  function step(n){f1.hidden=n!==1;f2.hidden=n!==2;$('st1').setAttribute('aria-current',n===1?'step':'false');$('st2').setAttribute('aria-current',n===2?'step':'false');$('st1').className=n===2?'done':'';}
-  f1.addEventListener('submit',function(e){
+  function done(){go.disabled=false;go.textContent=LABEL}
+  $('f').addEventListener('submit',function(e){
     e.preventDefault();show('');
-    var bad=['name','email','firm'].filter(function(k){var el=$(k);el.value=el.value.trim();return !el.checkValidity()});
-    if(bad.length){show(bad[0]==='email'&&$('email').value?'Please enter a valid email address.':'Please fill in your name, email and firm.');$(bad[0]).focus();return}
-    $('whoName').textContent=$('name').value+' · '+$('firm').value;step(2);$('pw').focus();
-  });
-  $('back').addEventListener('click',function(){show('');step(1);$('name').focus()});
-  f2.addEventListener('submit',function(e){
-    e.preventDefault();show('');
-    var body={name:$('name').value,email:$('email').value,firm:$('firm').value,password:$('pw').value};
-    if(!body.password.trim()){show('Please enter your password.');$('pw').focus();return}
-    var go=$('go');go.disabled=true;go.textContent='Checking…';
-    fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),credentials:'same-origin'})
+    var pw=$('pw').value;
+    if(!pw.trim()){show('Please enter your password.');$('pw').focus();return}
+    go.disabled=true;go.textContent='Checking…';
+    fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:pw}),credentials:'same-origin'})
       .then(function(r){return r.json().catch(function(){return {ok:false,error:'Unexpected response ('+r.status+').'}})})
       .then(function(j){
-        if(j&&j.ok){
-          try{localStorage.setItem(KEY,JSON.stringify({name:body.name,email:body.email,firm:body.firm}))}catch(e){}
-          if(location.pathname==='/login.html')location.replace(admin?'/admin':'/');else location.reload();
-          return;
-        }
-        show((j&&j.error)||'Sign-in failed.');$('pw').select();
-        go.disabled=false;go.textContent='Open the white paper';
+        if(j&&j.ok){if(location.pathname==='/login.html')location.replace(admin?'/admin':'/');else location.reload();return}
+        show((j&&j.error)||'Sign-in failed.');$('pw').select();done();
       })
-      .catch(function(){show('Network error. Please check your connection and try again.');go.disabled=false;go.textContent='Open the white paper'});
+      .catch(function(){show('Network error. Please check your connection and try again.');done()});
   });
 })();
 </script>

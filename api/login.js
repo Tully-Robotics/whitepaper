@@ -5,7 +5,6 @@ const MAX_FAILS = 8; // per IP per 15 minutes
 const json = (obj, status = 200, extra = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...extra } });
 const clip = (v, n) => String(v ?? '').trim().replace(/\s+/g, ' ').slice(0, n);
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function POST(request) {
   const { session, master } = secrets();
@@ -16,9 +15,7 @@ export async function POST(request) {
 
   let body = {};
   try { body = await request.json(); } catch { return json({ ok: false, error: 'Bad request.' }, 400); }
-  const name = clip(body.name, 120), email = clip(body.email, 200).toLowerCase(), firm = clip(body.firm, 160);
   const password = String(body.password ?? '').trim().slice(0, 200);
-  if (!name || !EMAIL.test(email) || !firm) return json({ ok: false, error: 'Please fill in your name, a valid email and your firm.' }, 400);
   if (!password) return json({ ok: false, error: 'Please enter your password.' }, 400);
 
   const h = request.headers;
@@ -52,8 +49,9 @@ export async function POST(request) {
 
   if (sql) {
     try {
-      await sql`insert into tw_logins (kind, invite_id, name, email, firm, country, city, ip_hash, user_agent)
-        values (${kind}, ${inviteId}, ${name}, ${email}, ${firm}, ${country}, ${city}, ${ipHash}, ${ua})`;
+      // Visitors only enter a password: who signed in is known from the invite it belongs to.
+      await sql`insert into tw_logins (kind, invite_id, country, city, ip_hash, user_agent)
+        values (${kind}, ${inviteId}, ${country}, ${city}, ${ipHash}, ${ua})`;
     } catch { /* logging is best effort */ }
   } else if (kind !== 'master') {
     return json({ ok: false, error: 'The sign-in service is unavailable. Please try again shortly.' }, 503);
@@ -61,7 +59,7 @@ export async function POST(request) {
 
   if (kind === 'failed') {
     await new Promise((r) => setTimeout(r, 600));
-    return json({ ok: false, error: 'That password is not valid. Check the email you received, or contact the person who invited you.' }, 401);
+    return json({ ok: false, error: 'That password is not valid. Check the message you received, or contact the person who invited you.' }, 401);
   }
 
   const exp = Math.floor(Date.now() / 1000) + MAX_AGE;
