@@ -1,2 +1,5 @@
 .vercel
 .DS_Store
+README.md
+node_modules
+.env*

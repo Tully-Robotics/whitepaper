@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tully White Paper · Access admin</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111a14'/%3E%3Ccircle cx='32' cy='36' r='16' fill='%23c4332b'/%3E%3Cpath d='M32 20c0-6 3-9 8-10' stroke='%235fb27a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/assets/fonts.05b06388.css">
+<style>
+:root{--paper:#f4f5f1;--surface:#fff;--sunk:#eceee8;--ink:#111a14;--ink2:#3f4a43;--muted:#68736b;--line:#dbe0d8;--line2:#c4cbc2;--accent:#c4332b;--accent-tint:#fbe9e6;--accent-ink:#8f1f19;--leaf:#2d6a41;--leaf-tint:#e3efe6;--sky:#2b6aa0;--warn:#a8640f;--warn-tint:#fbf0de;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;--body:"Source Serif 4",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--paper:#0e1411;--surface:#151d18;--sunk:#111915;--ink:#e7ece8;--ink2:#bac5bd;--muted:#8a978e;--line:#25302a;--line2:#34413a;--accent:#e5574d;--accent-tint:#3a1b18;--accent-ink:#ffb4ab;--leaf:#5fb27a;--leaf-tint:#173022;--sky:#6aa8dc;--warn:#e3a148;--warn-tint:#3a2a12}}
+:root[data-theme="dark"]{color-scheme:dark;--paper:#0e1411;--surface:#151d18;--sunk:#111915;--ink:#e7ece8;--ink2:#bac5bd;--muted:#8a978e;--line:#25302a;--line2:#34413a;--accent:#e5574d;--accent-tint:#3a1b18;--accent-ink:#ffb4ab;--leaf:#5fb27a;--leaf-tint:#173022;--sky:#6aa8dc;--warn:#e3a148;--warn-tint:#3a2a12}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+[hidden]{display:none!important}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:24px}
+@media (max-width:600px){.wrap{padding-inline:16px}}
+.bar{border-bottom:1px solid var(--line);background:var(--surface)}
+.bar .wrap{display:flex;align-items:center;gap:16px;min-height:56px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-stretch:115%;font-size:20px;letter-spacing:.02em;color:var(--ink);text-decoration:none}
+.brand i{font-style:normal;color:var(--accent)}
+.bar .tag{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);flex:1}
+@media (max-width:480px){.bar .tag{visibility:hidden}.bar .wrap{gap:12px}}
+a{color:var(--sky)}
+h1,h2{font-family:var(--display);font-weight:700;letter-spacing:-.01em;margin:0}
+h1{font-size:30px;font-stretch:108%;margin:32px 0 6px}
+h2{font-size:20px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 24px}
+.fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.fields{grid-template-columns:minmax(0,1fr)}}
+.outg{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;align-items:start}
+@media (max-width:800px){.outg{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px}
+label,.lbl{display:block;font-family:var(--display);font-weight:600;font-size:13px;margin:0 0 5px}
+.f{margin-bottom:12px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line2);border-radius:6px;padding:9px 11px;min-height:42px}
+textarea{min-height:150px;font-size:14px;line-height:1.45;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--sky);outline-offset:1px;border-color:transparent}
+button{white-space:nowrap;font-family:var(--display);font-weight:650;font-size:14px;border-radius:6px;cursor:pointer;min-height:38px;padding:8px 14px;border:1px solid var(--line2);background:var(--surface);color:var(--ink)}
+button:hover{border-color:var(--ink2)}
+button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+button.danger{color:var(--accent-ink)}
+button.sm{min-height:32px;padding:4px 10px;font-size:13px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.out{margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+.pw{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--leaf-tint);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.pw code{font-family:var(--mono);font-size:22px;letter-spacing:.06em;font-weight:600;flex:1;min-width:0;overflow-wrap:anywhere}
+.hint{font-size:14px;color:var(--muted);margin:8px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-family:var(--display);font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tw{overflow-x:auto;margin:0 -22px;padding:0 22px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+td .m{color:var(--muted);font-size:13px;display:block}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:2px 8px;white-space:nowrap}
+.ok{background:var(--leaf-tint);color:var(--leaf)}
+.bad{background:var(--accent-tint);color:var(--accent-ink)}
+.mst{background:var(--sunk);color:var(--ink2)}
+.wrn{background:var(--warn-tint);color:var(--warn)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.mt{margin-top:8px}
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.head h2{margin:0}
+.err{background:var(--accent-tint);color:var(--accent-ink);border-radius:6px;padding:10px 12px;margin:0 0 14px}
+.empty{color:var(--muted);padding:14px 0}
+section{margin-bottom:20px}
+</style>
+</head>
+<body>
+<header class="bar"><div class="wrap"><a class="brand" href="/">TULLY<i>.</i></a><span class="tag">Access admin</span><a href="/">Open the white paper</a><a href="/api/logout">Sign out</a></div></header>
+<main class="wrap">
+  <h1>Who can read the white paper</h1>
+  <p class="sub">Create a personal password for each person you send the link to. Revoking one locks that person out on their next page load. The master password always works and is the only way into this page.</p>
+  <p class="err" id="err" role="alert" hidden></p>
+  <div class="stats" id="stats"></div>
+    <section class="card" aria-labelledby="h-new">
+      <h2 id="h-new">New invite</h2>
+      <form id="fNew">
+        <div class="fields">
+          <div class="f"><label for="nName">Name</label><input type="text" id="nName" required maxlength="120" autocomplete="off"></div>
+          <div class="f"><label for="nFirm">Firm</label><input type="text" id="nFirm" maxlength="160" autocomplete="off"></div>
+          <div class="f"><label for="nEmail">Email</label><input id="nEmail" type="email" maxlength="200" autocomplete="off"></div>
+          <div class="f"><label for="nNote">Note (only you see this)</label><input type="text" id="nNote" maxlength="300" autocomplete="off" placeholder="e.g. met at FIRA"></div>
+        </div>
+        <button class="primary" type="submit" id="bNew">Create password</button>
+      </form>
+      <div class="out" id="out" hidden>
+        <div class="outg">
+          <div>
+            <span class="lbl">Password for <span id="outFor"></span></span>
+            <div class="pw"><code id="outPw"></code><button type="button" id="cpPw">Copy</button></div>
+            <p class="hint">Shown only now: the server keeps a one-way hash of it. If it is lost, use “New password” on the invite.</p>
+          </div>
+          <div>
+            <label for="outMsg">Message to send</label>
+            <textarea id="outMsg" spellcheck="false"></textarea>
+            <div class="acts mt"><button type="button" id="cpMsg">Copy message</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="card" aria-labelledby="h-inv">
+      <div class="head"><h2 id="h-inv">Invites</h2><button type="button" class="sm" id="refresh">Refresh</button></div>
+      <div class="tw"><table><thead><tr><th>Person</th><th>Created</th><th>Sign-ins</th><th>Last seen</th><th>Status</th><th></th></tr></thead><tbody id="tInv"></tbody></table></div>
+    </section>
+  <section class="card" aria-labelledby="h-log">
+    <div class="head"><h2 id="h-log">Sign-ins</h2><a href="/api/admin?view=csv">Download CSV</a></div>
+    <div class="tw"><table><thead><tr><th>Time</th><th>Name</th><th>Email</th><th>Firm</th><th>Password used</th><th>Location</th></tr></thead><tbody id="tLog"></tbody></table></div>
+  </section>
+</main>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var data={invites:[],logins:[]};
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  function when(t){if(!t)return '—';var d=new Date(t);return d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}
+  function ago(t){if(!t)return '—';var s=(Date.now()-new Date(t))/1000;if(s<90)return 'just now';if(s<3600)return Math.round(s/60)+' min ago';if(s<86400)return Math.round(s/3600)+' h ago';if(s<86400*45)return Math.round(s/86400)+' d ago';return when(t)}
+  function showErr(m){$('err').textContent=m||'';$('err').hidden=!m}
+  function api(method,body){
+    return fetch('/api/admin'+(method==='GET'?'?view=summary':''),{method:method,headers:body?{'content-type':'application/json'}:{},body:body?JSON.stringify(body):undefined,credentials:'same-origin'})
+      .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j},function(){throw new Error('HTTP '+r.status)})});
+  }
+  function stat(n,l){var d=el('div','stat');d.appendChild(el('b',null,String(n)));d.appendChild(el('span',null,l));return d}
+  function render(){
+    var inv=data.invites,log=data.logins;
+    var active=inv.filter(function(i){return !i.revoked_at}).length;
+    var ok=log.filter(function(l){return l.kind!=='failed'});
+    var people={};ok.forEach(function(l){people[(l.email||'').toLowerCase()]=1});
+    var s=$('stats');s.textContent='';
+    s.appendChild(stat(active,'Active invites'));s.appendChild(stat(ok.length,'Recent sign-ins'));
+    s.appendChild(stat(Object.keys(people).length,'People signed in'));s.appendChild(stat(data.failed24||0,'Failed, last 24 h'));
+    var tb=$('tInv');tb.textContent='';
+    if(!inv.length){var tr=el('tr');var td=el('td','empty','No invites yet. Create the first one on the left.');td.colSpan=6;tr.appendChild(td);tb.appendChild(tr)}
+    inv.forEach(function(i){
+      var tr=el('tr');
+      var p=el('td');p.appendChild(el('b',null,i.name));p.appendChild(el('span','m',[i.firm,i.email].filter(Boolean).join(' · ')||'—'));if(i.note)p.appendChild(el('span','m',i.note));tr.appendChild(p);
+      tr.appendChild(el('td','n',when(i.created_at)));
+      tr.appendChild(el('td','n',String(i.logins)));
+      tr.appendChild(el('td','n',ago(i.last_seen||i.last_login)));
+      var st=el('td');st.appendChild(el('span','pill '+(i.revoked_at?'bad':'ok'),i.revoked_at?'Revoked':'Active'));tr.appendChild(st);
+      var a=el('td');var acts=el('div','acts');
+      var b1=el('button','sm'+(i.revoked_at?'':' danger'),i.revoked_at?'Restore':'Revoke');b1.type='button';
+      b1.addEventListener('click',function(){act(i.revoked_at?'restore':'revoke',i)});
+      var b2=el('button','sm','New password');b2.type='button';b2.addEventListener('click',function(){act('reset',i)});
+      acts.appendChild(b1);acts.appendChild(b2);a.appendChild(acts);tr.appendChild(a);
+      tb.appendChild(tr);
+    });
+    var tl=$('tLog');tl.textContent='';
+    if(!log.length){var tr2=el('tr');var td2=el('td','empty','Nobody has signed in yet.');td2.colSpan=6;tr2.appendChild(td2);tl.appendChild(tr2)}
+    log.forEach(function(l){
+      var tr=el('tr');
+      tr.appendChild(el('td','n',when(l.at)));
+      tr.appendChild(el('td',null,l.name||'—'));
+      var em=el('td',null,l.email||'—');
+      if(l.kind==='invite'&&l.invite_email&&l.email&&l.invite_email.toLowerCase()!==l.email.toLowerCase()){em.appendChild(document.createTextNode(' '));em.appendChild(el('span','pill wrn','not the invited email'))}
+      tr.appendChild(em);
+      tr.appendChild(el('td',null,l.firm||'—'));
+      var via=el('td');
+      if(l.kind==='invite'){via.appendChild(el('span','pill ok','Invite'));via.appendChild(el('span','m',l.invite_name||''))}
+      else if(l.kind==='master')via.appendChild(el('span','pill mst','Master'));
+      else via.appendChild(el('span','pill bad','Wrong password'));
+      tr.appendChild(via);
+      tr.appendChild(el('td',null,[l.city,l.country].filter(Boolean).join(', ')||'—'));
+      tl.appendChild(tr);
+    });
+  }
+  function load(){return api('GET').then(function(j){data=j;showErr('');render()}).catch(function(e){showErr(e.message)})}
+  function message(name,pw){
+    var first=(name||'').split(' ')[0]||'there';
+    return 'Hi '+first+',\n\nHere is your personal access to the Tully Robotics white paper:\n\n'+location.origin+'/\nPassword: '+pw+'\n\nYou will be asked for your name, email and firm, then the password. The password is for you only, so please do not forward it.\n\nBest regards,\n';
+  }
+  function showPw(name,pw){$('outFor').textContent=name;$('outPw').textContent=pw;$('outMsg').value=message(name,pw);$('out').hidden=false;$('out').scrollIntoView({block:'nearest',behavior:'smooth'})}
+  function act(kind,i){
+    if(kind==='revoke'&&!confirmBox('Revoke access for '+i.name+'? They are locked out on their next page load.'))return;
+    if(kind==='reset'&&!confirmBox('Issue a new password for '+i.name+'? The old one stops working immediately.'))return;
+    api('POST',{action:kind,id:i.id}).then(function(j){if(kind==='reset')showPw(i.name,j.password);return load()}).catch(function(e){showErr(e.message)});
+  }
+  // A small inline confirm instead of window.confirm, so the page never blocks on a native dialog.
+  var pending=null;
+  function confirmBox(msg){if(pending===msg){pending=null;return true}pending=msg;showErr(msg+' Click the button again to confirm.');setTimeout(function(){if(pending===msg){pending=null;showErr('')}},6000);return false}
+  $('fNew').addEventListener('submit',function(e){
+    e.preventDefault();showErr('');
+    var b={action:'create',name:$('nName').value.trim(),firm:$('nFirm').value.trim(),email:$('nEmail').value.trim(),note:$('nNote').value.trim()};
+    if(!b.name){showErr('A name is required.');$('nName').focus();return}
+    $('bNew').disabled=true;
+    api('POST',b).then(function(j){showPw(b.name,j.password);$('fNew').reset();return load()}).catch(function(e){showErr(e.message)}).then(function(){$('bNew').disabled=false});
+  });
+  function copy(text,btn){var done=function(){var t=btn.textContent;btn.textContent='Copied';setTimeout(function(){btn.textContent=t},1400)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done,function(){fallback()});else fallback();
+    function fallback(){var ta=$('outMsg');var v=ta.value;ta.value=text;ta.select();try{document.execCommand('copy');done()}catch(e){}ta.value=v}}
+  $('cpPw').addEventListener('click',function(){copy($('outPw').textContent,this)});
+  $('cpMsg').addEventListener('click',function(){copy($('outMsg').value,this)});
+  $('refresh').addEventListener('click',load);
+  load();
+})();
+</script>
+</body>
+</html>

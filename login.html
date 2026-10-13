@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tully White Paper · Sign in</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#f4f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1411" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111a14'/%3E%3Ccircle cx='32' cy='36' r='16' fill='%23c4332b'/%3E%3Cpath d='M32 20c0-6 3-9 8-10' stroke='%235fb27a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/assets/fonts.05b06388.css">
+<style>
+:root{--paper:#f4f5f1;--surface:#fff;--sunk:#eceee8;--ink:#111a14;--ink2:#3f4a43;--muted:#68736b;--line:#dbe0d8;--line2:#c4cbc2;--accent:#c4332b;--accent-tint:#fbe9e6;--accent-ink:#8f1f19;--leaf:#2d6a41;--sky:#2b6aa0;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;--body:"Source Serif 4",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--paper:#0e1411;--surface:#151d18;--sunk:#111915;--ink:#e7ece8;--ink2:#bac5bd;--muted:#8a978e;--line:#25302a;--line2:#34413a;--accent:#e5574d;--accent-tint:#3a1b18;--accent-ink:#ffb4ab;--leaf:#5fb27a;--sky:#6aa8dc}}
+:root[data-theme="dark"]{color-scheme:dark;--paper:#0e1411;--surface:#151d18;--sunk:#111915;--ink:#e7ece8;--ink2:#bac5bd;--muted:#8a978e;--line:#25302a;--line2:#34413a;--accent:#e5574d;--accent-tint:#3a1b18;--accent-ink:#ffb4ab;--leaf:#5fb27a;--sky:#6aa8dc}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;display:grid;grid-template-rows:auto 1fr auto;min-height:100vh;min-height:100dvh}
+[hidden]{display:none!important}
+.top,.foot{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-family:var(--display);font-weight:800;font-stretch:115%;font-size:20px;letter-spacing:.02em;color:var(--ink);text-decoration:none}
+.brand i{font-style:normal;color:var(--accent)}
+.tag,.foot{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+main{display:grid;place-items:center;padding:24px 16px 48px}
+.card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:32px 32px 28px;box-shadow:0 1px 0 var(--line),0 20px 40px -24px rgba(17,26,20,.18)}
+@media (max-width:480px){.card{padding:24px 20px 22px}}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:12px}
+.eyebrow b{color:var(--accent);font-weight:500}
+h1{font-family:var(--display);font-weight:700;font-stretch:108%;font-size:32px;line-height:1.08;letter-spacing:-.01em;margin:0 0 10px}
+.lead{color:var(--ink2);margin:0 0 22px}
+.steps{display:flex;gap:8px;margin:0 0 20px;padding:0;list-style:none;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.steps li{display:flex;align-items:center;gap:8px;flex:1;padding-top:8px;border-top:2px solid var(--line)}
+.steps li[aria-current="step"]{color:var(--ink);border-top-color:var(--accent)}
+.steps li.done{border-top-color:var(--leaf)}
+label,.lbl{display:block;font-family:var(--display);font-weight:600;font-size:14px;margin:0 0 6px;color:var(--ink)}
+.f{margin-bottom:14px}
+input{width:100%;font:inherit;font-family:var(--body);font-size:17px;color:var(--ink);background:var(--paper);border:1px solid var(--line2);border-radius:6px;padding:11px 12px;min-height:46px}
+input:focus{outline:2px solid var(--sky);outline-offset:1px;border-color:transparent}
+input.pw{font-family:var(--mono);letter-spacing:.06em}
+button{font-family:var(--display);font-weight:650;font-size:16px;border-radius:6px;cursor:pointer;min-height:46px}
+.primary{width:100%;background:var(--ink);color:var(--paper);border:0;padding:12px 16px;margin-top:6px}
+.primary:hover{background:color-mix(in srgb,var(--ink) 86%,var(--accent))}
+.primary:disabled{opacity:.6;cursor:progress}
+.link{background:none;border:0;color:var(--sky);padding:0;min-height:0;font-family:var(--body);font-weight:400;font-size:15px;text-decoration:underline;text-underline-offset:3px}
+button:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
+.who{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:var(--sunk);border-radius:6px;padding:10px 12px;margin-bottom:14px;font-size:15px;color:var(--ink2)}
+.who b{color:var(--ink);font-weight:600}
+.err{background:var(--accent-tint);color:var(--accent-ink);border-radius:6px;padding:10px 12px;font-size:15px;margin:0 0 14px}
+.note{font-size:14px;color:var(--muted);margin:18px 0 0;line-height:1.5}
+.admin{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+</style>
+</head>
+<body>
+<header class="top"><span class="brand">TULLY<i>.</i></span><span class="tag">Confidential</span></header>
+<main>
+  <div class="card">
+    <span class="eyebrow"><b>●</b> By invitation</span>
+    <h1>Tully White Paper</h1>
+    <p class="lead">An autonomous multi-arm apple harvester that cuts the stem. Please tell us who you are, then enter the password you received.</p>
+    <p class="admin" id="adm" hidden>Admin · sign in with the master password</p>
+    <ol class="steps"><li id="st1" aria-current="step">1 · Your details</li><li id="st2">2 · Password</li></ol>
+    <p class="err" id="err" role="alert" hidden></p>
+    <form id="f1" novalidate>
+      <div class="f"><label for="name">Name</label><input type="text" id="name" name="name" autocomplete="name" required maxlength="120"></div>
+      <div class="f"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="200" inputmode="email"></div>
+      <div class="f"><label for="firm">Firm</label><input type="text" id="firm" name="firm" autocomplete="organization" required maxlength="160"></div>
+      <button class="primary" type="submit">Continue</button>
+    </form>
+    <form id="f2" hidden>
+      <div class="who"><span>Signing in as <b id="whoName"></b></span><button class="link" type="button" id="back">Edit</button></div>
+      <div class="f"><label for="pw">Password</label><input id="pw" class="pw" name="password" type="password" autocomplete="current-password" required maxlength="200" spellcheck="false" autocapitalize="characters"></div>
+      <button class="primary" type="submit" id="go">Open the white paper</button>
+    </form>
+    <p class="note">We record your name, email, firm and the time of each sign-in so we know who has access to this confidential document. Questions or no password? Write to the person who sent you the link.</p>
+    <noscript><p class="err">This page needs JavaScript to sign in.</p></noscript>
+  </div>
+</main>
+<footer class="foot"><span>© Tully Robotics</span><span>Not for distribution</span></footer>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var f1=$('f1'),f2=$('f2'),err=$('err'),KEY='tully-login-details';
+  var admin=location.pathname==='/admin'||location.pathname==='/admin.html'||/[?&]admin=/.test(location.search);
+  if(admin)$('adm').hidden=false;
+  try{var d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){$('name').value=d.name||'';$('email').value=d.email||'';$('firm').value=d.firm||''}}catch(e){}
+  function show(msg){err.textContent=msg;err.hidden=!msg}
+  function step(n){f1.hidden=n!==1;f2.hidden=n!==2;$('st1').setAttribute('aria-current',n===1?'step':'false');$('st2').setAttribute('aria-current',n===2?'step':'false');$('st1').className=n===2?'done':'';}
+  f1.addEventListener('submit',function(e){
+    e.preventDefault();show('');
+    var bad=['name','email','firm'].filter(function(k){var el=$(k);el.value=el.value.trim();return !el.checkValidity()});
+    if(bad.length){show(bad[0]==='email'&&$('email').value?'Please enter a valid email address.':'Please fill in your name, email and firm.');$(bad[0]).focus();return}
+    $('whoName').textContent=$('name').value+' · '+$('firm').value;step(2);$('pw').focus();
+  });
+  $('back').addEventListener('click',function(){show('');step(1);$('name').focus()});
+  f2.addEventListener('submit',function(e){
+    e.preventDefault();show('');
+    var body={name:$('name').value,email:$('email').value,firm:$('firm').value,password:$('pw').value};
+    if(!body.password.trim()){show('Please enter your password.');$('pw').focus();return}
+    var go=$('go');go.disabled=true;go.textContent='Checking…';
+    fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),credentials:'same-origin'})
+      .then(function(r){return r.json().catch(function(){return {ok:false,error:'Unexpected response ('+r.status+').'}})})
+      .then(function(j){
+        if(j&&j.ok){
+          try{localStorage.setItem(KEY,JSON.stringify({name:body.name,email:body.email,firm:body.firm}))}catch(e){}
+          if(location.pathname==='/login.html')location.replace(admin?'/admin':'/');else location.reload();
+          return;
+        }
+        show((j&&j.error)||'Sign-in failed.');$('pw').select();
+        go.disabled=false;go.textContent='Open the white paper';
+      })
+      .catch(function(){show('Network error. Please check your connection and try again.');go.disabled=false;go.textContent='Open the white paper'});
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "tully-white-paper",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "db:status": "node scripts/migrate.mjs status",
+    "db:migrate": "node scripts/migrate.mjs up",
+    "db:rollback": "node scripts/migrate.mjs down",
+    "db:new": "node scripts/migrate.mjs new"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.2.0"
+  },
+  "devDependencies": {
+    "pg": "8.23.1"
+  }
+}
