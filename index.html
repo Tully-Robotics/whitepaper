@@ -15,14 +15,14 @@
 <link rel="preload" href="fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts.05b06388.css">
-<link rel="stylesheet" href="assets/site.d599bf26.css">
+<link rel="stylesheet" href="assets/site.620acf92.css">
 </head>
 <body>
 <nav class="topbar" aria-label="Sections">
   <div class="wrap">
     <a class="brand" href="#top">TULLY<i>.</i></a>
     <div class="toc" id="wp-toc">
-      <a href="#summary">Summary</a><a href="#market">Market</a><a href="#model">Tully</a><a href="#economics">Unit economics</a><a href="#competition">Competition</a><a href="#technology">Technology</a><a href="#roadmap">Roadmap</a><a href="#team">Team</a><a href="#investment">Investment</a>
+      <a href="#summary">Summary</a><a href="#market">Market</a><a href="#model">Tully</a><a href="#economics">Unit economics</a><a href="#competition">Competition</a><a href="#technology">Technology</a><a href="#roadmap">Roadmap</a><a href="#investment">Investment</a>
     </div>
   </div>
   <div class="prog" id="wp-prog"></div>
@@ -78,17 +78,12 @@
     <div class="split">
       <div class="prose rv">
         <h3 style="margin-top:0">The orchard labour problem</h3>
-        <p>Orchards still depend on large amounts of seasonal manual labour at crucial points in the production cycle, harvesting above all. Yet this workforce is getting harder to secure. Western European growers have historically relied on workers from countries such as Poland, Czechia and Romania. The European Commission states that Europe's structural demand for seasonal work is no longer fully met by EU workers, and Germany's migration authority reports declining interest among Polish and Romanian workers as conditions at home improve and agriculture competes with construction, tourism and other sectors [1], [2].</p>
+        <p>Orchards still depend on large amounts of seasonal manual labour at crucial points in the production cycle, harvesting above all: every apple sold fresh in a supermarket was still picked by hand. Yet this workforce is getting harder to secure. Western European growers have historically relied on workers from countries such as Poland, Czechia and Romania. The European Commission states that Europe's structural demand for seasonal work is no longer fully met by EU workers, and Germany's migration authority reports declining interest among Polish and Romanian workers as conditions at home improve and agriculture competes with construction, tourism and other sectors [1], [2].</p>
         <p>The United States faces the same pressure. The OECD reports growing agricultural worker shortages: demand for H-2A visas for temporary farm workers rose by 266 % between 2010 and 2019 [3].</p>
         <p>Apple prices are largely set by the market, so growers have little room to pass on rising labour costs. In the US, wages and contract labour were 40 % of expenses for fruit and tree-nut farms in 2022, against 12 % across all farms [4].</p>
       </div>
-      <div class="rv" style="display:grid;gap:20px">
-        <figure><img src="img/alley.webp" width="1800" height="1012" loading="lazy" alt="Simulation rendering of the harvester working an apple alley between two tree rows"><figcaption>Simulation model in a 3.1 m apple alley.</figcaption></figure>
-        <div class="card">
-          <h4>Annual spend on manual work</h4>
-          <div class="hbar" id="wp-funnel"></div>
-          <p class="small" style="margin:0">Outdoor high-value crops: apples and other pome fruit, avocados, stone fruit and citrus. Obtainable market: apple orchards in the United States, Canada, Italy, Germany, Austria, France, Belgium, Poland and Spain.</p>
-        </div>
+      <div class="rv">
+        <figure class="tall"><img src="img/picking.webp" width="642" height="947" loading="lazy" alt="Seasonal workers picking apples by hand into a bin between two rows of trees under hail nets"><figcaption>Harvest today: every fresh apple is picked by hand.</figcaption></figure>
       </div>
     </div>
     <div class="split" style="margin-top:40px">
@@ -109,11 +104,25 @@
 <section class="ch" id="model">
   <div class="wrap">
     <header><span class="eyebrow"><b>02</b> · Tully</span><h2>Selling finished orchard work, not machines</h2></header>
-    <p class="lead rv" style="margin-top:0">Tully aims to build a global autonomous workforce for outdoor high-value crops, making demanding orchard work dependable and economical, with smaller teams supervising robotic fleets instead of spending long days on repetitive manual tasks.</p>
-    <div class="split" style="margin-top:28px">
+    <p class="lead rv" style="margin-top:0">Tully aims to build a global autonomous workforce for outdoor high-value crops, starting with thinning and harvesting for apples, making demanding orchard work dependable and economical, with smaller teams supervising robotic fleets instead of spending long days on repetitive manual tasks.</p>
+    <h3 class="rv" id="team">Who is Tully</h3>
+    <p class="rv" style="margin:0 0 20px;color:var(--ink2)">Tully's founding team combines company building, computer vision and robotics deployment.</p>
+    <div class="people rv">
+      <div class="person"><img class="ph" src="img/p-daniel.webp" width="320" height="320" loading="lazy" alt="Portrait of Daniel Sattel"><span class="role">Co-founder &amp; CEO</span><h4>Daniel Sattel</h4><p>A second-time founder who scaled an IoT mobility company to seven-figure revenue. Leads company building, fundraising and commercialisation, translating farmer needs into customer relationships and a viable business.</p></div>
+      <div class="person"><img class="ph" src="img/p-harsh.webp" width="320" height="320" loading="lazy" alt="Portrait of Harsh Munshi"><span class="role">Co-founder &amp; CTO</span><h4>Harsh Munshi</h4><p>More than 15 years in computer vision, including perception for autonomous systems. Leads the technical architecture, connecting perception, robot control and on-board computing into one reliable system.</p></div>
+      <div class="person"><img class="ph" src="img/p-raphael.webp" width="320" height="320" loading="lazy" alt="Portrait of Raphael Joppi"><span class="role">Co-founder &amp; CPO</span><h4>Raphael Joppi</h4><p>Experience taking robotic systems from concept to deployment, and a family background in apple farming. Leads product development, turning orchard workflows into requirements and engineering decisions into field performance.</p></div>
+    </div>
+    <div class="split rv" style="margin-top:32px">
+      <div class="prose">
+        <h3 style="margin-top:0">Expertise across agriculture and robotics</h3>
+        <p>Tully is also assembling an advisor group around three critical capabilities: apple automation, agricultural machinery commercialisation and advanced robotics.</p>
+      </div>
+      <div class="person"><span class="role">Advisor · apple automation and grower requirements</span><h4>Dr. Ines Hanrahan</h4><p>Executive Director of the Washington Tree Fruit Research Commission, with more than ten years in tree-fruit robotics research and grower needs. Challenges our picking and fruit-quality benchmarks, guides meaningful field trials and helps make sure technical progress turns into useful orchard work.</p></div>
+    </div>
+    <div class="split" style="margin-top:48px">
       <div class="prose rv">
         <h3 style="margin-top:0">A reliable workforce every season</h3>
-        <p>The autonomous workforce is a set of robotic systems that automate manual work at the trees, such as thinning and harvesting, and navigate the orchard rows on their own. Tully builds them from commercial off-the-shelf components, integrates them and trains the algorithms to do the tasks reliably.</p>
+        <p>The autonomous workforce Tully builds is a set of robotic systems that automate manual work at the trees, such as thinning and harvesting, and navigate the orchard rows on their own. Tully builds them from commercial off-the-shelf components, integrates them and trains the algorithms to do the tasks reliably.</p>
         <p>The robots are offered as Outcome-as-a-Service: farmers buy completed orchard work against agreed requirements for timing, output and fruit quality. Farmers keep control of seasonal planning, deciding which work is needed, where and when. Tully deploys, operates, supervises and maintains the machines, starting with thinning and harvesting.</p>
         <p>This matters because farmers must keep working capital for labour, inputs and running the orchard, and large equipment purchases compete with those needs. Renting, leasing or borrowing spreads the cost, but no farmer will take on that commitment before a robot has proven its reliability and value. A service lowers the commitment and puts responsibility for performance with Tully.</p>
         <p>Preparing for thinning today means securing workers, arranging accommodation and meals, handling administration and supervising the work. A mobile work platform costing about €80,000–120,000 supports this but still needs people, and illness or departures mid-season disrupt the plan. With Tully, the grower places one order for the blocks, timing and thinning requirements, and Tully organises and delivers the work, including supervision, maintenance and recovery. Pricing is a familiar hourly rate against agreed performance, so it compares directly with existing labour costs.</p>
@@ -122,23 +131,36 @@
         <h3 style="margin-top:0">Apples first</h3>
         <p>Apple production has the largest labour cost, and one fruit lets Tully optimise the system for its quality requirements and workflows before moving to other crops. Tully's obtainable market is the labour market in western European and North American apple orchards: more than 462,000 hectares, 236 million manual hours a year and a €4 billion labour pool across the United States, Canada, Italy, Germany, Austria, France, Belgium, Poland and Spain.</p>
         <p>Apple growing is also concentrated in dense regional clusters that share climate, labour pools, cooperatives, storage and machinery. Washington produces about 68 % of US apples, and Poland, Italy, France and Germany concentrate 75 % of EU production in dense areas [5]. That lets Tully run robots, operators, maintenance and spare parts from regional operations centres with short travel and high fleet utilisation.</p>
-        <h3>The integration opportunity</h3>
-        <p>While seasonal labour has become scarcer and dearer, robotics and AI have crossed the threshold of commercial readiness. Industrial robot arms now cost in the low five figures, and edge-computing performance per dollar has grown about 50 % a year [6]. Together with market-ready off-road navigation stacks and mobile bases, this lets Tully assemble, iterate and deploy physical systems more cheaply than ever, which was the main pitfall for earlier attempts.</p>
+        <div class="card" style="margin-top:24px">
+          <h4>Annual spend on manual work</h4>
+          <div class="hbar" id="wp-funnel"></div>
+          <p class="small" style="margin:0">Outdoor high-value crops: apples and other pome fruit, avocados, stone fruit and citrus. Obtainable market: apple orchards in the United States, Canada, Italy, Germany, Austria, France, Belgium, Poland and Spain.</p>
+        </div>
       </div>
     </div>
     <div class="split" style="margin-top:40px">
       <div class="prose rv">
-        <h3 style="margin-top:0">Validation from the field</h3>
+        <h3 style="margin-top:0">The integration opportunity</h3>
+        <p>While seasonal labour has become scarcer and dearer, robotics and AI have crossed the threshold of commercial readiness. Industrial robot arms now cost in the low five figures, and edge-computing performance per dollar has grown about 50 % a year [6]. Together with market-ready off-road navigation stacks and mobile bases, this lets Tully assemble, iterate and deploy physical systems more cheaply than ever, which was the main pitfall for earlier attempts.</p>
+        <h3>Validation from the field</h3>
         <p>In more than 30 conversations with farmers, cooperatives, market experts and research centres, the picture is clear: the market does not just want a reliable automated solution for labour-intensive orchard work, it needs one. Whether a 1.5 ha grower in South Tyrol, a 120 ha farm in Washington or the largest growers in Brazil, seasonal labour is scarce and getting more expensive everywhere. Several farmers have committed to testing Tully's solution in their own fields.</p>
         <blockquote class="quote">“Automating the manual work would revolutionise the complete market.”</blockquote>
         <blockquote class="quote">“Even if you can only automate one part of my manual work, the machine would run right now in my fields.”</blockquote>
         <p>To validate technical feasibility, the team built computer-vision pipelines and simulation environments covering sensor input, apple detection and localisation, robot approach and a simulated picking process. The next milestone is the first physical prototype, deployed during the coming thinning period.</p>
       </div>
+      <div class="rv">
+        <figure style="margin-top:0"><img src="img/team.webp" width="1289" height="713" loading="lazy" alt="The three Tully founders in an apple orchard"><figcaption>The founders in an apple orchard.</figcaption></figure>
+        <figure style="margin-top:24px"><img src="img/alley.webp" width="1800" height="1012" loading="lazy" alt="Simulation rendering of the harvester working an apple alley between two tree rows"><figcaption>Simulation model in a 3.1 m apple alley.</figcaption></figure>
+      </div>
+    </div>
+    <div class="split" style="margin-top:40px">
       <div class="prose rv">
         <h3 style="margin-top:0">Built for speed and quality</h3>
         <p>Tully builds a company that delivers on two extremes: exceptional development speed and uncompromising operational excellence. Headquarters are in Munich, but development happens with hands dirty in orchards at Bodensee and in South Tyrol, testing early, failing fast and iterating within hours, always measured by task completion in real orchard conditions.</p>
         <p>Once performance meets commercial requirements, the focus moves to reliability. Agreed timelines and quality cannot be compromised, and Tully carries the responsibility when its robots fail, including intervention, recovery and restoring service. Every field intervention feeds back into engineering to remove recurring failures and reduce the need for supervision as the fleet grows.</p>
-        <h3>Scaling through regional hubs</h3>
+      </div>
+      <div class="prose rv">
+        <h3 style="margin-top:0">Scaling through regional hubs</h3>
         <p>Each hub brings fleet deployment, field supervision, maintenance and local sales together, keeping travel short and intervention fast. Each runs as a profitable operating unit responsible for its fleet, customer commitments and local costs. Once one hub delivers reliably and profitably, the model is replicated in other regions, while engineering stays at the Munich headquarters. Thinning and harvesting extend each fleet's season, and the Southern Hemisphere adds seasons that complement northern operations.</p>
       </div>
     </div>
@@ -710,40 +732,9 @@
   </div>
 </section>
 
-<section class="ch" id="team">
-  <div class="wrap">
-    <header><span class="eyebrow"><b>07</b> · The team behind Tully</span><h2>Company building, computer vision and robotics deployment</h2></header>
-    <div class="people rv">
-      <div class="person"><span class="role">Co-founder &amp; CEO</span><h4>Daniel Sattel</h4><p>A second-time founder who scaled an IoT mobility company to seven-figure revenue. Leads company building, fundraising and commercialisation, translating farmer needs into customer relationships and a viable business.</p></div>
-      <div class="person"><span class="role">Co-founder &amp; CTO</span><h4>Harsh Munshi</h4><p>More than 15 years in computer vision, including perception for autonomous systems. Leads the technical architecture, connecting perception, robot control and on-board computing into one reliable system.</p></div>
-      <div class="person"><span class="role">Co-founder &amp; CPO</span><h4>Raphael Joppi</h4><p>Experience taking robotic systems from concept to deployment, and a family background in apple farming. Leads product development, turning orchard workflows into requirements and engineering decisions into field performance.</p></div>
-    </div>
-    <div class="split" style="margin-top:48px">
-      <div class="rv">
-        <h3 style="margin-top:0">Hiring for commercial deployment</h3>
-        <div class="tw"><table>
-          <thead><tr><th>Function</th><th class="n">People</th><th>Main responsibility</th></tr></thead>
-          <tbody>
-            <tr><td>Computer vision</td><td class="n">2</td><td>Fruit and branch perception, localisation, robustness across light, occlusion and orchard conditions</td></tr>
-            <tr><td>Robotics</td><td class="n">1</td><td>Integrate perception, motion planning, control, sensors and computing into a reliable robot</td></tr>
-            <tr><td>Gripper</td><td class="n">1</td><td>Develop and validate the end-effector for the highest fruit quality</td></tr>
-            <tr><td>System integration</td><td class="n">1</td><td>Integrate purchased parts and peripherals; hands-on workshop skills</td></tr>
-            <tr><td>Founders associate</td><td class="n">1</td><td>Pilot coordination, grant applications and operations</td></tr>
-          </tbody></table></div>
-      </div>
-      <div class="rv">
-        <h3 style="margin-top:0">Advisor</h3>
-        <div style="display:grid;gap:18px">
-          <div class="person"><span class="role">Apple automation and grower requirements</span><h4>Dr. Ines Hanrahan</h4><p>Executive Director of the Washington Tree Fruit Research Commission, with more than ten years in tree-fruit robotics research and grower needs. Challenges our picking and fruit-quality benchmarks and guides field trials.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="ch" id="investment">
   <div class="wrap">
-    <header><span class="eyebrow"><b>08</b> · Investment</span><h2>Proving performance in the field</h2></header>
+    <header><span class="eyebrow"><b>07</b> · Investment</span><h2>Proving performance in the field</h2></header>
     <div class="split">
       <div class="rv">
         <div class="big">€3.5M</div><p class="eyebrow" style="margin:10px 0 0">for 24 months and two growing seasons</p>
@@ -754,6 +745,23 @@
         <div class="stack" id="wp-stack" role="img" aria-label="Team and salaries 64 percent, prototyping and field testing 16 percent, external services 10 percent, company operations 8 percent"></div>
         <div class="alloc-l" id="wp-alloc"></div>
         <p class="small" style="margin:0">Most of the capital goes to the team that develops, integrates and deploys the robot. Hardware covers robotic arms, platforms, gripper development, prototyping and field testing; available components are used where possible and orchard-specific parts are built in-house. The rest covers external services, certification, software, development tools and company infrastructure.</p>
+      </div>
+    </div>
+    <div class="split" style="margin-top:40px">
+      <div class="prose rv">
+        <h3 style="margin-top:0">Team building</h3>
+        <p>The initial hiring plan builds the engineering and deployment capabilities needed to turn prototypes into a commercially usable workforce. Tully prioritises integrating available components, developing specialised hardware where necessary and testing the complete system in orchards, to iterate at the highest pace.</p>
+      </div>
+      <div class="rv">
+        <div class="tw"><table>
+          <thead><tr><th>Function</th><th class="n">People</th><th>Main responsibility</th></tr></thead>
+          <tbody>
+            <tr><td>Computer vision</td><td class="n">2</td><td>Fruit and branch perception, localisation, robustness across light, occlusion and orchard conditions</td></tr>
+            <tr><td>Robotics</td><td class="n">1</td><td>Integrate perception, motion planning, control, sensors and computing into a reliable robot</td></tr>
+            <tr><td>Gripper</td><td class="n">1</td><td>Develop and validate the end-effector for the highest fruit quality</td></tr>
+            <tr><td>System integration</td><td class="n">1</td><td>Integrate purchased parts and peripherals; hands-on workshop skills</td></tr>
+            <tr><td>Founders associate</td><td class="n">1</td><td>Pilot coordination, grant applications and operations</td></tr>
+          </tbody></table></div>
       </div>
     </div>
     <div class="split" style="margin-top:40px">
@@ -772,7 +780,7 @@
 
 <section class="ch" id="sources">
   <div class="wrap">
-    <header><span class="eyebrow"><b>09</b> · Sources and appendix</span><h2>Sources</h2></header>
+    <header><span class="eyebrow"><b>08</b> · Sources and appendix</span><h2>Sources</h2></header>
     <ol class="src rv">
       <li><a href="https://home-affairs.ec.europa.eu/policies/migration-and-asylum/legal-migration-and-resettlement/work/seasonal-workers-directive_en" target="_blank" rel="noopener">European Commission: Seasonal Workers Directive</a></li>
       <li><a href="https://home-affairs.ec.europa.eu/system/files/2021-06/de_emn_study_seasonal_workers_en.pdf" target="_blank" rel="noopener">German EMN study on seasonal workers</a></li>
