@@ -1,9 +1,10 @@
 name: Deploy to Vercel
 
+# main        → production (https://<your domain>), after running the database migrations
+# any branch  → preview deployment with its own URL (shown in the run summary)
 on:
   push:
-    branches: [main]
-  pull_request:
+    branches: ['**']
   workflow_dispatch:
 
 concurrency:
@@ -20,21 +21,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: Set deployment target
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "TARGET=preview" >> "$GITHUB_ENV"
-            echo "PROD_FLAG=" >> "$GITHUB_ENV"
-          else
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             echo "TARGET=production" >> "$GITHUB_ENV"
             echo "PROD_FLAG=--prod" >> "$GITHUB_ENV"
+          else
+            echo "TARGET=preview" >> "$GITHUB_ENV"
+            echo "PROD_FLAG=" >> "$GITHUB_ENV"
           fi
 
       - name: Pull Vercel project settings
-        run: vercel pull --yes --environment=$TARGET --token=${{ secrets.VERCEL_TOKEN }}
+        # --git-branch picks up preview variables scoped to this branch, if you set any
+        run: vercel pull --yes --environment=$TARGET --git-branch="${{ github.ref_name }}" --token=${{ secrets.VERCEL_TOKEN }}
+
+      # Production only: apply pending migrations before the new code goes live. A failed migration
+      # stops the deploy, and each migration runs in a transaction, so the database is left as it was.
+      # Previews do not migrate: unless you give Preview its own DATABASE_URL, they share the production database.
+      - name: Install dependencies
+        if: env.TARGET == 'production'
+        run: npm ci --no-audit --no-fund
+
+      - name: Run database migrations
+        if: env.TARGET == 'production'
+        env:
+          # Optional fallback, only needed if `vercel pull` does not write the URL (sensitive variable)
+          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
+        run: npm run db:migrate -- --env .vercel/.env.production.local
 
       - name: Build
         run: vercel build $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }}
@@ -42,7 +62,7 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          # Non-interactive CLI prints JSON; pull the deployment URL out of it
           url=$(vercel deploy --prebuilt $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }} | grep -oE 'https://[^"]+\.vercel\.app' | head -1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "Deployed to $url" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ${TARGET^} deployment of \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "$url" >> "$GITHUB_STEP_SUMMARY"
