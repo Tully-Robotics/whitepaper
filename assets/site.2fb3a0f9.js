@@ -2,7 +2,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const fmt=(x,d=0)=>isFinite(x)?x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'–';
-const eur=x=>(x<0?'−':'')+'€'+Math.round(Math.abs(x)).toLocaleString('en-US');
+const eur=x=>(x<0?'−':'')+Math.round(Math.abs(x)).toLocaleString('en-US')+' €';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------------- navigation: progress line and current section
@@ -16,47 +16,69 @@ secs.forEach(s=>so.observe(s));
 const ro=new IntersectionObserver(es=>{ for(const e of es){ if(e.isIntersecting){ e.target.classList.remove('pre'); ro.unobserve(e.target); } } },{rootMargin:'0px 0px -8% 0px'});
 if(!reduced) document.querySelectorAll('.rv').forEach(el=>{ if(el.getBoundingClientRect().top>innerHeight){ el.classList.add('pre'); ro.observe(el); } });
 
-// ---------------- market funnel
-(function(){ const R=[['Manual work in orchards, worldwide',60,''],['Apples, worldwide',21,'lf'],['Tully obtainable market, 9 countries',4,'ac']];
-  $('wp-funnel').innerHTML=R.map(r=>`<div class="hb"><span>${r[0]}</span><div class="tr"><i class="${r[2]}" style="width:${(r[1]/60*100).toFixed(1)}%"></i></div><span class="v">€${r[1]} bn</span></div>`).join(''); })();
-// ---------------- Tully vs Pluk-o-Trak small multiples
-(function(){ const M=[['Harvested per day','t',7,15.9,1],['Days per hectare','days',7.4,3.3,1,1],['Cost per hectare','€',6195,5576,0,1],['Operating hours','h',10,20,0]];
-  $('wp-mult').innerHTML=M.map(([t,u,a,b,d,lo])=>{ const mx=Math.max(a,b), f=x=>u==='€'?'€'+x.toLocaleString('en-US'):fmt(x,d)+' '+u;
-    return `<div class="m"><h5>${t}<small>${lo?'lower is better':'higher is better'}</small></h5><div class="bx pt" role="img" aria-label="Pluk-o-Trak ${f(a)}" style="width:${(a/mx*100).toFixed(1)}%">${f(a)}</div><div class="bx tu" role="img" aria-label="Tully ${f(b)}" style="width:${(b/mx*100).toFixed(1)}%">${f(b)}</div></div>`; }).join(''); })();
-// ---------------- calculator (white-paper model), two systems
-// yield calibrated so the default plan reproduces the white paper's €227,909 revenue; maintenance = 10 % of the system cost (€26,000 at €260,000)
+// ---------------- problem teaser: a looping clip from the simulation; still frame for reduced motion, paused off screen
+(function(){ const v=$('wp-teaser'); if(!v) return;
+  if(reduced){ v.removeAttribute('autoplay'); v.pause(); v.controls=true; return; }
+  const io=new IntersectionObserver(es=>{ for(const e of es){ if(e.isIntersecting){ const p=v.play(); if(p&&p.catch) p.catch(()=>{}); } else v.pause(); } },{threshold:0.15}); io.observe(v); })();
+// ---------------- calculator (white-paper model for apples) and the live comparison with an assisted platform
+// yield calibrated so the default plan reproduces the white paper's 227,909 € revenue; maintenance = 10 % of the system cost
 const CW={mass:0.155,yield:51.87751,days:133,op:6251,maint:0.10};
-const PLANS={h:{arms:8,sec:5.6,hrs:20,price:5576,cost:260000,sub:'The system in development: off-the-shelf cobots picking at human speed per arm.',
-    note:'White-paper assumptions: 155 g per apple, about 52 t per hectare, 133 operating days a season, €6,251 operation cost, maintenance and machine cost of 10 % of the system cost (€26,000 at €260,000).'},
-  o:{arms:8,sec:2.0,hrs:20,price:5576,cost:182000,sub:'In-house custom actuators and manipulators: about 30 % lower system cost and roughly 2 s per apple per arm.',
-    note:'White paper: about 30 % lower system cost, almost triple the output at 114 ha a season and about €633k seasonal revenue per robot. Same yield, operating days, operation cost and 10 % maintenance as the human-level system.'}};
-let plan='h';
-function setPlan(k){ plan=k; const P=PLANS[k]; $('wp-c-arms').value=P.arms; $('wp-c-sec').value=P.sec; $('wp-c-hrs').value=P.hrs; $('wp-c-price').value=P.price; $('wp-c-cost').value=P.cost;
-  $('wp-calc-sub').textContent=P.sub; $('wp-calc-note').textContent=P.note;
-  [['h','wp-tab-h'],['o','wp-tab-o']].forEach(([kk,id])=>{ const b=$(id); b.setAttribute('aria-selected',kk===k?'true':'false'); b.tabIndex=kk===k?0:-1; });
-  calc(); }
+const PLAN={arms:8,sec:5.6,hrs:20,price:5576,cost:260000};
+const AP={sys:0.9,hrs:10,tday:7,dha:7.4,price:6195};
+function setPlan(){ $('wp-c-arms').value=PLAN.arms; $('wp-c-sec').value=PLAN.sec; $('wp-c-hrs').value=PLAN.hrs; $('wp-c-price').value=PLAN.price; $('wp-c-cost').value=PLAN.cost; calc(); }
 function calc(){ const n=+$('wp-c-arms').value, s=+$('wp-c-sec').value, h=+$('wp-c-hrs').value, pr=+$('wp-c-price').value, cost=+$('wp-c-cost').value;
   $('wp-o-arms').textContent=n; $('wp-o-sec').textContent=s.toFixed(1)+' s'; $('wp-o-hrs').textContent=h+' h'; $('wp-o-price').textContent=eur(pr);
-  $('wp-o-cost').textContent=eur(cost)+(cost<260000?' (−'+fmt((1-cost/260000)*100,0)+' %)':'');
-  const sys=s/n, tday=h*3600/sys*CW.mass/1000, dha=CW.yield/tday, ha=CW.days/dha, rev=ha*pr, mt=cost*CW.maint, gp=rev-CW.op-mt, mg=gp/rev;
-  const vs=(good,txt)=>`<span class="vs ${good?'good':'bad'}">${txt}</span>`;
-  const o=[[fmt(sys,2)+' s','per apple, whole machine',vs(sys<=0.9,sys<=0.9?'faster than a team (0.9 s)':'slower than a team (0.9 s)')],
-    [fmt(tday,1)+' t','harvested per day',vs(tday>=7,fmt(tday/7,1)+'× a Pluk-o-Trak team')],
-    [fmt(dha,1),'days per hectare',vs(dha<=7.4,'manual: 7.4 days')],
-    [fmt(ha,0)+' ha','per season',''],
-    [eur(rev),'revenue per season','<span class="vs">costs '+eur(CW.op+mt)+' a season</span>'],
-    [eur(gp),'gross profit per season',vs(mg>=0.5,fmt(mg*100,0)+' % margin'+(gp>0?' · ROI '+fmt(cost/gp,1)+' years':''))]];
-  $('wp-calc-out').innerHTML=o.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span>${x[2]}</div>`).join(''); }
+  $('wp-o-cost').textContent=eur(cost);
+  const sys=s/n, tday=h*3600/sys*CW.mass/1000, dha=CW.yield/tday, ha=CW.days/dha, rev=ha*pr, mt=cost*CW.maint, gp=rev-CW.op-mt, mg=gp/rev, be=gp>0?cost/gp:Infinity;
+  const tag=(good,txt)=>`<span class="vs ${good?'good':'bad'}">${txt}</span>`;
+  const o=[[fmt(ha,0)+' ha','worked per season',`<span class="vs">${CW.days} operating days</span>`],
+    [eur(rev),'revenue per season',''],
+    [eur(CW.op),'operation cost per season','<span class="vs">support, transport, energy</span>'],
+    [eur(mt),'maintenance and machine','<span class="vs">10 % of the system cost</span>'],
+    [eur(gp),'gross profit per season',tag(mg>=0.5,fmt(mg*100,0)+' % gross margin')],
+    [isFinite(be)?fmt(be,1)+' seasons':'–','to break even per robot',tag(be<=2,'10+ years of service')]];
+  $('wp-calc-out').innerHTML=o.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span>${x[2]}</div>`).join('');
+  const R=[['Harvesting speed, whole system',AP.sys,sys,v=>fmt(v,2)+' s',1],['Operating hours per day',AP.hrs,h,v=>fmt(v,0)+' h',0],
+    ['Harvested per day',AP.tday,tday,v=>fmt(v,1)+' t',0],['Days per hectare',AP.dha,dha,v=>fmt(v,1),1],['Cost per hectare to the farmer',AP.price,pr,v=>eur(v),1]];
+  $('wp-bf').innerHTML=R.map(([t,a,b,f,lo])=>{ const mx=Math.max(a,b), better=lo?b<a:b>a;
+    return `<div class="bf-r" role="row"><div class="bf-a" role="cell"><b>${f(a)}</b><i style="width:${(a/mx*100).toFixed(1)}%"></i></div><span class="bf-t" role="rowheader">${t}${lo?'<small>lower is better</small>':''}</span><div class="bf-b${better?'':' worse'}" role="cell"><i style="width:${(b/mx*100).toFixed(1)}%"></i><b>${f(b)}</b></div></div>`; }).join(''); }
 ['wp-c-arms','wp-c-sec','wp-c-hrs','wp-c-price','wp-c-cost'].forEach(id=>$(id).addEventListener('input',calc));
-$('wp-tab-h').addEventListener('click',()=>setPlan('h')); $('wp-tab-o').addEventListener('click',()=>setPlan('o'));
-$('wp-tab-h').addEventListener('keydown',e=>{ if(e.key==='ArrowRight'){ setPlan('o'); $('wp-tab-o').focus(); } });
-$('wp-tab-o').addEventListener('keydown',e=>{ if(e.key==='ArrowLeft'){ setPlan('h'); $('wp-tab-h').focus(); } });
-$('wp-calc-reset').addEventListener('click',()=>setPlan(plan));
-setPlan('h');
+$('wp-calc-reset').addEventListener('click',setPlan);
+setPlan();
 // ---------------- allocation
 (function(){ const A=[['Team and salaries',64,'var(--accent)'],['Prototyping and field testing',16,'var(--leaf)'],['External services',10,'var(--sky)'],['Company operations',8,'var(--muted)']];
   $('wp-stack').innerHTML=A.map(a=>`<i style="width:${a[1]}%;background:${a[2]}">${a[1]} %</i>`).join('');
   $('wp-alloc').innerHTML=A.map(a=>`<span><i style="background:${a[2]}"></i>${a[0]}</span>`).join(''); })();
+
+// ---------------- competition: who has tried, apples and other fruits on two log-style scales
+(function(){ const root=$('wp-mat'); if(!root) return; const det=$('wp-mat-d');
+  const C={
+    tully:{n:'Tully',crop:'Apples',a:'Mobile platform with off-the-shelf cobots on four rails; stem cutting; finished work sold as a service',s:'Vision pipelines and simulation built; first physical prototype in the coming thinning season'},
+    ffr:{n:'FFRobotics',crop:'Apples',a:'Mobile platform with several telescopic arms and mechanical gripping; on-board conveyance; harvesting focus',s:'Field tested; experts and insiders report limited financial resources and limited performance'},
+    tevel:{n:'Tevel',crop:'Apples and other tree fruit',a:'Picking drones flying from a mobile platform; selective harvesting by suction, fruit delivered into on-board bins',s:'Reported orchard deployments, for example apples for Unifrutti in Chile (2023); experts state limited compatibility with apple orchards'},
+    abundant:{n:'Abundant Robotics',crop:'Apples',a:'Dedicated harvesting machine with computer vision, vacuum picking and fruit conveyance',s:'Closed in 2021 after too little commercial traction and unsuccessful fundraising'},
+    afarm:{n:'Advanced Farm',crop:'Strawberries, then apples',a:'Mobile platform with robotic arms and suction gripping; on-board conveyance and bin filling',s:'Over $34M raised; CNH bought its assets and IP in 2025 after it failed to show commercialisation'},
+    croo:{n:'Harvest CROO',crop:'Strawberries',a:'Autonomous harvester for field-grown strawberries',s:'2025 field trials reported harvesting speeds comparable to human pickers in a commercial operation'},
+    agrobot:{n:'Agrobot',crop:'Strawberries',a:'Large platform with up to 24 independent picking arms, fruit perception and selective stem cutting',s:'Platform built; developing manipulation, navigation, vehicle and outdoor reliability at the same time proved hard (founder interview)'},
+    picker:{n:'Picker Agrobotics',crop:'Avocado and citrus',a:'Flexible hollow arms on existing machinery; cut the stem and pass the fruit through the arm into the bin',s:'Four generations tested in orchards; customer pilots planned from January 2027'}
+  };
+  // stages on a log-style axis: each band wider than the one before
+  const ST=['Research','Prototype','Field pilots','Scale-up','Commercial'];
+  const B=[0,.2,.4,.6,.8,1].map(t=>(Math.pow(4,t)-1)/3*100);
+  // [key, position %, row, closed]
+  const SETS=[['Apples, the largest market',[['tully',18,0],['ffr',29,0],['abundant',34,1,1],['tevel',40,0],['afarm',47,1,1]]],
+              ['Other fruits',[['picker',20,0],['agrobot',34,1],['tevel',40,0],['afarm',48,2,1],['croo',72,0]]]];
+  let sel=null;
+  function show(k){ sel=k; const c=C[k]; root.querySelectorAll('button.mc').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false'));
+    det.hidden=false; det.innerHTML=`<table><caption>${c.n} · ${c.crop}</caption><thead><tr><th scope="col">Approach</th><th scope="col">Status</th></tr></thead><tbody><tr><td>${c.a}</td><td>${c.s}</td></tr></tbody></table>`; }
+  const stage=x=>{ for(let i=ST.length-1;i>=0;i--) if(x>=B[i]) return ST[i]; return ST[0]; };
+  let idx=0;
+  root.innerHTML=SETS.map(([lab,S])=>{ const rows=1+Math.max(...S.map(s=>s[2]));
+    return `<div class="sc"><h5>${lab}</h5><div class="sc-lane" style="--rows:${rows}">${S.map(([k,x,r,dead])=>`<button type="button" class="mc${k==='tully'?' us':''}${dead?' dead':''}" data-k="${k}" data-st="${stage(x)}" aria-pressed="false" style="--x:${x}%;--r:${r};--d:${(idx++)*120}ms;--tx:-${x<12?15:x>80?85:50}%">${k==='tully'?'TULLY<i>.</i>':C[k].n}${dead?'<small>closed</small>':''}</button>`).join('')}</div>
+      <div class="sc-bar">${ST.map((t,i)=>`<span style="width:${(B[i+1]-B[i]).toFixed(2)}%">${t}</span>`).join('')}<i class="sc-fill"></i></div></div>`; }).join('');
+  root.querySelectorAll('button.mc').forEach(b=>b.addEventListener('click',()=>show(b.dataset.k)));
+  const io=new IntersectionObserver(es=>{ for(const e of es){ if(e.isIntersecting){ root.classList.add('go'); io.disconnect(); } } },{threshold:0.35});
+  if(reduced) root.classList.add('go'); else io.observe(root); })();
 
 // =====================================================================================
 // live diagrams

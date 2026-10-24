@@ -1828,7 +1828,7 @@ function sheet(){ const n=U.length, M=COBOTS[COBOT], E=EOATS[EOAT];
   rows.push(['Shift at a steady 5 kW / at 80 % capacity',`${(BATT.nom*BATT.use/5).toFixed(1)} h / ${(0.8*BATT.nom*BATT.use/5).toFixed(1)} h`]);
   rows.push(['<b>Footprint and cost</b>','']); rows.push(['Length × width stowed × height',`${M_LEN.toFixed(2)} × ${(2*STOW_W).toFixed(2)} × ${(ROOF_Y+0.2).toFixed(2)} m`]);
   rows.push(['Headland needed',headNeed().toFixed(2)+' m']);
-  rows.push([`${n} cobots at list price`,M.price?`€${(n*M.price).toLocaleString('en-GB')} excl. VAT`:'price on request']);
+  rows.push([`${n} cobots at list price`,M.price?`${(n*M.price).toLocaleString('en-GB')} € excl. VAT`:'price on request']);
   rows.push(['Capacity at the mean cycle',cyc?`${(n/cyc).toFixed(2)} fruit/s`:'–']);
   rows.push(['<b>Collision audit (this run)</b>','']); rows.push(['Closest arm-to-arm approach',S.minAA<9?(S.minAA*100).toFixed(1)+' cm':'–']); rows.push(['Arm-to-machine contacts',String(S.hitsAM||0)]);
   $('sheet').innerHTML=rows.map(r=>`<tr${r[2]?' class="tot"':''}><td>${r[0]}</td><td>${r[1]}</td></tr>`).join(''); }
