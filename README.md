@@ -117,7 +117,8 @@ vercel dev                                         # http://localhost:3000, runs
 
 | Path | What it is |
 |---|---|
-| `index.html` | the white paper |
+| `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is copied from `paper.html` because the simulation expects that DOM; keep the two in step |
+| `paper.html` | the full white paper, linked from every chapter of the story |
 | `login.html`, `admin.html` | login page, access admin (admin needs the master password) |
 | `middleware.js` | the gate: checks the session cookie on every request |
 | `api/login.js`, `api/logout.js`, `api/admin.js` | sign in, sign out (`/api/logout`), admin API |
@@ -126,7 +127,7 @@ vercel dev                                         # http://localhost:3000, runs
 | `scripts/migrate.mjs` | the migration runner (`npm run db:*`) |
 | `package.json` | `@neondatabase/serverless` at runtime, `pg` for migrations |
 | `.github/workflows/` | deploy on push; production pushes run the migrations first |
-| `assets/` | CSS, the simulation, page script. File names are content-hashed, so they are cached for a year. |
+| `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
 | `vendor/three-0.128.0/` | three.js r128, MIT licence included, served from this site |
 | `img/` | renders and diagrams |
 | `fonts/` | self-hosted web fonts with their licences (SIL OFL) |
