@@ -1,0 +1,113 @@
+/* Review tools (npm run review). Everything is scoped to #rv-root so it cannot collide with the site's own styles. */
+::highlight(rv-mark){background-color:rgba(255,196,0,.42);color:inherit}
+::highlight(rv-active){background-color:rgba(255,128,0,.62);color:inherit}
+[data-rv]{cursor:pointer}
+html.rv-picking,html.rv-picking *{cursor:crosshair!important}
+@media (min-width:1100px){ html.rv-open body{margin-right:380px}
+  /* the story's fixed bar and live counter span the window: keep them clear of the panel */
+  html.rv-open .bar{right:380px} html.rv-open .ticker{right:calc(380px + var(--gut,16px))} }
+
+#rv-root{--rv-ink:#111a14;--rv-ink2:#3f4a43;--rv-muted:#68736b;--rv-line:#dbe0d8;--rv-paper:#fbfbf8;--rv-accent:#c4332b;--rv-leaf:#2d6a41;--rv-hi:#ffc400;
+  font:14px/1.45 "Source Serif 4",Georgia,serif;color:var(--rv-ink);-webkit-font-smoothing:antialiased}
+#rv-root *{box-sizing:border-box}
+/* the site styles bare elements (p, h2, form, label…); reset them inside the tools, below every rv- rule */
+#rv-root :is(div,p,h2,form,label,span,b,em,time,code,textarea,input,button){margin:0;max-width:none;text-transform:none;letter-spacing:normal}
+#rv-root button,#rv-root input,#rv-root textarea{font:inherit;color:inherit}
+#rv-root code{font:12px "JetBrains Mono",ui-monospace,Menlo,monospace;background:rgba(17,26,20,.07);padding:1px 4px;border-radius:3px}
+#rv-root [hidden]{display:none!important}
+#rv-root .rv-primary,#rv-root .rv-ghost,#rv-root .rv-toggle,#rv-root .rv-bubble{font-family:"Archivo",system-ui,sans-serif;font-weight:600;cursor:pointer;border-radius:999px;line-height:1}
+#rv-root .rv-primary{background:var(--rv-ink);color:#fff;border:0;padding:9px 16px}
+#rv-root .rv-primary:hover:not(:disabled){background:var(--rv-accent)}
+#rv-root .rv-primary:disabled{opacity:.4;cursor:not-allowed}
+#rv-root .rv-ghost{background:#fff;border:1px solid #c4cbc2;padding:8px 13px}
+#rv-root .rv-ghost:hover{border-color:var(--rv-ink)}
+#rv-root .rv-ghost[aria-pressed="true"]{background:#e3efe6;border-color:var(--rv-leaf);color:var(--rv-leaf)}
+#rv-root .rv-link{background:none;border:0;padding:0;font-family:"Archivo",system-ui,sans-serif;font-size:12.5px;font-weight:600;color:var(--rv-muted);cursor:pointer}
+#rv-root .rv-link:hover{color:var(--rv-accent)}
+#rv-root .rv-row{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+#rv-root textarea,#rv-root input{width:100%;border:1px solid #c4cbc2;border-radius:8px;padding:8px 10px;background:#fff;resize:vertical}
+#rv-root textarea:focus,#rv-root input:focus,#rv-root button:focus-visible{outline:2px solid #2b6aa0;outline-offset:1px}
+
+/* the switch, bottom left */
+#rv-root .rv-toggle{position:fixed;left:16px;bottom:16px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:10px 15px;background:#fff;
+  border:1px solid #c4cbc2;box-shadow:0 6px 22px rgba(0,0,0,.16);font-size:14px}
+#rv-root .rv-toggle i{width:9px;height:9px;border-radius:50%;background:#b8bfb7}
+#rv-root .rv-toggle.on{background:var(--rv-ink);color:#fff;border-color:var(--rv-ink)}
+#rv-root .rv-toggle.on i{background:var(--rv-hi)}
+#rv-root .rv-toggle b{font-size:12px;background:var(--rv-hi);color:var(--rv-ink);border-radius:999px;padding:3px 7px}
+
+/* selection bubble and composer */
+#rv-root .rv-bubble{position:fixed;z-index:2147483002;padding:8px 13px;background:var(--rv-ink);color:#fff;border:0;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:13.5px}
+#rv-root .rv-bubble::before{content:"+ "}
+#rv-root .rv-chip{position:fixed;z-index:2147483002;padding:7px 11px;background:var(--rv-ink);color:#fff;border:0;border-radius:999px;font:600 12.5px "Archivo",system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+#rv-root .rv-chip::before{content:"+ "}
+/* commented images, charts and blocks: boxes drawn over them (review.js keeps each one on its element) */
+#rv-root .rv-marks{position:fixed;inset:0;pointer-events:none;z-index:2147482998;overflow:hidden}
+#rv-root .rv-mark{position:absolute;left:0;top:0;border:3px solid rgba(255,196,0,.95);box-shadow:0 0 0 1px rgba(17,26,20,.25);will-change:transform}
+#rv-root .rv-mark.act{border-color:#ff8000;border-width:4px}
+#rv-root .rv-pickbox{position:fixed;z-index:2147482999;pointer-events:none;border:2px dashed #ff8000;background:rgba(255,196,0,.12);border-radius:4px;transition:all .08s}
+#rv-root .rv-pickbox span{position:absolute;left:-2px;top:-24px;font:600 11.5px "Archivo",system-ui,sans-serif;background:#ff8000;color:#fff;padding:3px 8px;border-radius:4px 4px 0 0;white-space:nowrap}
+#rv-root .rv-pickbox.scene{border-style:solid;background:rgba(255,196,0,.06)}
+#rv-root .rv-pickbox.scene span{top:4px;left:4px;border-radius:4px}
+#rv-root .rv-composer{position:fixed;z-index:2147483003;background:var(--rv-paper);border:1px solid #c4cbc2;border-radius:12px;padding:12px;display:grid;gap:10px;box-shadow:0 14px 40px rgba(0,0,0,.25)}
+#rv-root .rv-q{margin:0;padding:6px 10px;border-left:3px solid var(--rv-hi);background:rgba(255,196,0,.12);font-style:italic;color:var(--rv-ink2);max-height:5.5em;overflow:auto}
+#rv-root .rv-kinds{display:flex;flex-wrap:wrap;gap:6px}
+#rv-root .rv-kinds label{cursor:pointer}
+#rv-root .rv-kinds input{position:absolute;opacity:0;width:1px;height:1px}
+#rv-root .rv-kinds span{display:inline-block;font:600 12px "Archivo",system-ui,sans-serif;padding:5px 10px;border-radius:999px;border:1px solid #c4cbc2;background:#fff}
+#rv-root .rv-kinds input:checked+span{background:var(--rv-ink);color:#fff;border-color:var(--rv-ink)}
+#rv-root .rv-kinds input:focus-visible+span{outline:2px solid #2b6aa0}
+#rv-root .rv-composer .rv-name{flex:1;min-width:150px}
+
+/* the panel */
+#rv-root .rv-panel{position:fixed;top:0;right:0;bottom:0;width:380px;z-index:2147483001;background:var(--rv-paper);border-left:1px solid var(--rv-line);
+  box-shadow:-10px 0 30px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden}
+@media (max-width:640px){ #rv-root .rv-panel{top:auto;left:0;width:auto;height:62vh;border-left:0;border-top:1px solid var(--rv-line);border-radius:14px 14px 0 0} }
+#rv-root .rv-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 6px}
+#rv-root .rv-head h2{margin:0;font:700 18px "Archivo",system-ui,sans-serif}
+#rv-root .rv-head h2 span{font-weight:500;color:var(--rv-muted);font-size:14px;margin-left:4px}
+#rv-root .rv-x{background:none;border:0;font-size:24px;line-height:1;cursor:pointer;color:var(--rv-muted);padding:0 4px}
+#rv-root .rv-me{display:flex;align-items:center;gap:8px;padding:4px 16px 8px}
+#rv-root .rv-me label{flex:1;display:flex;align-items:center;gap:8px;font:600 12px "Archivo",system-ui,sans-serif;color:var(--rv-muted)}
+#rv-root .rv-me input{padding:6px 9px}
+#rv-root .rv-point{font-size:12px;padding:7px 10px;white-space:nowrap}
+#rv-root .rv-info,#rv-root .rv-ok,#rv-root .rv-warn,#rv-root .rv-sum{margin:2px 16px 8px;padding:9px 11px;border-radius:8px;font-size:13px}
+#rv-root .rv-info{background:#e8f0f7;color:#1d4a70}
+#rv-root .rv-ok{background:#e3efe6;color:#1f4d2f}
+#rv-root .rv-warn{background:#fbf0de;color:#6b420a}
+#rv-root .rv-sum{background:#fff;border:1px solid var(--rv-line)}
+#rv-root .rv-info a{color:inherit;font-weight:600}
+#rv-root .rv-tabs{display:flex;gap:4px;padding:4px 16px 8px;border-bottom:1px solid var(--rv-line);align-items:center}
+#rv-root .rv-tabs span{flex:1}
+#rv-root .rv-tabs button{font:600 12.5px "Archivo",system-ui,sans-serif;background:none;border:0;padding:6px 8px;border-radius:6px;cursor:pointer;color:var(--rv-muted)}
+#rv-root .rv-tabs button[aria-pressed="true"]{background:rgba(17,26,20,.08);color:var(--rv-ink)}
+#rv-root .rv-list{flex:1;overflow:auto;padding:10px 12px;display:grid;gap:10px;align-content:start}
+#rv-root .rv-empty{margin:24px 16px;color:var(--rv-muted);text-align:center}
+#rv-root .rv-err{margin:16px;color:var(--rv-accent)}
+#rv-root .rv-card{background:#fff;border:1px solid var(--rv-line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+#rv-root .rv-card.act{border-color:#ff8000;box-shadow:0 0 0 2px rgba(255,128,0,.25)}
+#rv-root .rv-card.done{border-left:4px solid var(--rv-leaf)}
+#rv-root .rv-card.declined{border-left:4px solid var(--rv-accent)}
+#rv-root .rv-meta{display:flex;align-items:baseline;gap:7px;font-size:12.5px}
+#rv-root .rv-meta b{font-family:"Archivo",system-ui,sans-serif}
+#rv-root .rv-card time{color:var(--rv-muted);margin-left:auto;font-size:12px}
+#rv-root .rv-kind{font:600 10.5px "JetBrains Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--rv-accent)}
+#rv-root .rv-quote{text-align:left;background:rgba(255,196,0,.13);border:0;border-left:3px solid var(--rv-hi);padding:5px 9px;border-radius:0 6px 6px 0;font-style:italic;color:var(--rv-ink2);cursor:pointer}
+#rv-root .rv-quote:disabled{cursor:default;opacity:.7}
+#rv-root .rv-quote.obj,#rv-root .rv-q.obj{font-style:normal;border-left-color:#ff8000;background:rgba(255,128,0,.08)}
+#rv-root .rv-where{margin:0;font:11px/1.35 "JetBrains Mono",ui-monospace,Menlo,monospace;color:var(--rv-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rv-root .rv-quote em{font-style:normal;font:600 11px "Archivo",system-ui,sans-serif;color:var(--rv-muted)}
+#rv-root .rv-body{margin:0;white-space:pre-wrap}
+#rv-root .rv-note{margin:0;padding:7px 9px;background:#f4f5f1;border-radius:6px;font-size:13px}
+#rv-root .rv-card.done .rv-note b{color:var(--rv-leaf)} #rv-root .rv-card.declined .rv-note b{color:var(--rv-accent)}
+#rv-root .rv-reply{padding:6px 0 0 10px;border-left:2px solid var(--rv-line);font-size:13px;white-space:pre-wrap}
+#rv-root .rv-acts{display:flex;gap:14px}
+#rv-root .rv-inline{display:grid;gap:8px}
+#rv-root .rv-foot{border-top:1px solid var(--rv-line);padding:10px 16px 14px;display:grid;gap:9px;background:#fff}
+#rv-root .rv-fin{margin:0;font-size:12.5px;color:var(--rv-muted)}
+#rv-root .rv-foot .rv-row{justify-content:flex-start}
+#rv-root .rv-foot .rv-ghost{font-size:12.5px;padding:7px 11px}
+#rv-root .rv-send{width:100%;padding:12px}
+#rv-root .rv-fine{margin:0;font-size:11.5px;color:var(--rv-muted)}
+#rv-root .rv-toast{pointer-events:none;position:fixed;left:16px;bottom:66px;z-index:2147483004;max-width:min(420px,calc(100vw - 32px));background:var(--rv-ink);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#rv-root .rv-toast.bad{background:var(--rv-accent)}

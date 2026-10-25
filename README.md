@@ -113,6 +113,18 @@ vercel dev                                         # http://localhost:3000, runs
 
 `vercel dev` reads `.env` only (not `.env.local`). When there is no `.env`, it fetches the Development variables from Vercel itself. `.env*` is in `.gitignore` and `.vercelignore`, so it is never committed or deployed.
 
+## Review mode
+
+Founders comment on the site in the browser; comments sync through the dev database, and **Make the changes** sends a round to Claude in the cloud, which edits the site and pushes to `feat/automated-sandboxing`. How it works: `docs/review-loop.md`.
+
+```bash
+vercel env pull .env --environment=development   # once: the dev DATABASE_URL (see above)
+npm install && npm run db:migrate                  # once: the review tables on the dev branch
+npm run review                                     # http://localhost:8000, then click "Review" bottom left
+```
+
+**Make the changes** also needs `CLAUDE_TASK_FIRE_URL` and `CLAUDE_TASK_TOKEN` in `.env`: see `docs/claude-review-task.md`. Commenting works without them.
+
 ## Contents
 
 | Path | What it is |
@@ -125,6 +137,8 @@ vercel dev                                         # http://localhost:3000, runs
 | `lib/` | shared session and database code (not served as files) |
 | `db/migrations/` | the database schema as SQL migrations |
 | `scripts/migrate.mjs` | the migration runner (`npm run db:*`) |
+| `review/` | review mode (`npm run review`): the local server, the in-page tools and Claude's answers per round. Not deployed |
+| `docs/` | how the review loop works, and the setup of the Claude cloud task. Not deployed |
 | `package.json` | `@neondatabase/serverless` at runtime, `pg` for migrations |
 | `.github/workflows/` | deploy on push; production pushes run the migrations first |
 | `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
