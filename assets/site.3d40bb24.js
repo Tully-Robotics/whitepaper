@@ -36,7 +36,7 @@ function calc(){ const n=+$('wp-c-arms').value, s=+$('wp-c-sec').value, h=+$('wp
     [eur(CW.op),'operation cost per season','<span class="vs">support, transport, energy</span>'],
     [eur(mt),'maintenance and machine','<span class="vs">10 % of the system cost</span>'],
     [eur(gp),'gross profit per season',tag(mg>=0.5,fmt(mg*100,0)+' % gross margin')],
-    [isFinite(be)?fmt(be,1)+' seasons':'–','to break even per robot',tag(be<=2,'10+ years of service')]];
+    [isFinite(be)?fmt(be,1)+' years':'–','to break even per robot',tag(be<=2,'10+ years of service')]];
   $('wp-calc-out').innerHTML=o.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span>${x[2]}</div>`).join('');
   const R=[['Harvesting speed, whole system',AP.sys,sys,v=>fmt(v,2)+' s',1],['Operating hours per day',AP.hrs,h,v=>fmt(v,0)+' h',0],
     ['Harvested per day',AP.tday,tday,v=>fmt(v,1)+' t',0],['Days per hectare',AP.dha,dha,v=>fmt(v,1),1],['Cost per hectare to the farmer',AP.price,pr,v=>eur(v),1]];

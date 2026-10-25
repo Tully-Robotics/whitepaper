@@ -1,0 +1,2 @@
+{ "round": 2, "summary": "Changed the break-even unit from \"seasons\" to \"years\" (value 1.3 unchanged) in the economics chapter of index.html, and for consistency in the hero stat of index.html, the hero stat of paper.html and the live calculator in assets/site.*.js (renamed for the new hash). Check the economics panel first.",
+  "comments": [ { "id": 2, "result": "done", "note": "Replaced \"seasons\" with \"years\" next to 1.3 in all break-even displays so both pages agree; assumed one season per year, so the figure itself is unchanged." } ] }
