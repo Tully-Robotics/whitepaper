@@ -257,7 +257,10 @@ small{font-size:.5em;font-weight:600;color:var(--muted);margin-left:3px}
 .alloc p span:nth-child(1){--c:var(--accent)} .alloc p span:nth-child(2){--c:var(--leaf)} .alloc p span:nth-child(3){--c:var(--sky)} .alloc p span:nth-child(4){--c:var(--muted)}
 
 /* roadmap: seven stations on one road (JS draws it through the markers); the machine drives it with the scroll */
-.trip{--n:7;--s:.11;position:relative;margin-top:34px}
+/* pinned: the chapter is PIN windows taller than the screen and its panel sticks while the reader scrolls through */
+.sc.pin.pinned{display:block;min-height:0;padding:0;box-sizing:border-box}
+.sc.pin.pinned>.wrap{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;padding-top:50px;box-sizing:border-box}
+.trip{position:relative;margin-top:30px}
 .trip .rd{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .trip .way,.trip .done{fill:none;stroke-linecap:round;stroke-linejoin:round}
 .trip .way{stroke:color-mix(in srgb,var(--ink) 14%,transparent);stroke-width:8}
@@ -265,14 +268,17 @@ small{font-size:.5em;font-weight:600;color:var(--muted);margin-left:3px}
 .tbot{position:absolute;left:0;top:0;width:30px;height:24px;margin:-26px 0 0 -15px;z-index:2;pointer-events:none}
 .tbot svg{display:block;width:30px;height:24px}
 .tbot .fr{fill:var(--ink)} .tbot .bn{fill:var(--leaf)} .tbot .wh{fill:var(--ink);stroke:var(--paper);stroke-width:1}
-.trip ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px 14px;position:relative}
-.trip li{display:grid;gap:3px;align-content:start;padding-top:22px;position:relative;opacity:calc(.18 + .82*var(--q));transform:translateY(calc((1 - var(--q))*10px))}
+.trip ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px 14px;position:relative}
+/* a year lights when the machine reaches it */
+.trip li{display:grid;gap:2px;align-content:start;padding-top:20px;position:relative;transition:opacity .45s ease,transform .45s ease}
+.scrubbing .trip li:not(.on){opacity:.22;transform:translateY(8px)}
 .trip li:nth-child(5){grid-row:2;grid-column:4} .trip li:nth-child(6){grid-row:2;grid-column:3} .trip li:nth-child(7){grid-row:2;grid-column:2}
-.trip .node{position:absolute;left:8px;top:0;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--accent) calc(var(--q)*100%),var(--line2));z-index:1}
+.trip .node{position:absolute;left:8px;top:0;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 3px var(--line2);z-index:1;transition:box-shadow .45s}
+.trip li.on .node,body:not(.scrubbing) .trip .node{box-shadow:inset 0 0 0 3px var(--accent)}
 .trip h4{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-.trip p{margin:0;font-family:var(--display);font-size:14.5px;font-weight:620;line-height:1.28;min-height:3.8em}
+.trip p{margin:0;font-family:var(--display);font-size:13.5px;font-weight:620;line-height:1.26;min-height:3.8em}
 .trip .n{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.trip .n b{display:block;font-family:var(--display);font-size:26px;font-weight:760;line-height:1;color:var(--ink)}
+.trip .n b{display:block;font-family:var(--display);font-size:23px;font-weight:760;line-height:1;color:var(--ink)}
 .trip .h{font-family:var(--mono);font-size:11px;color:var(--ink2)}
 .trip .fx{display:flex;gap:4px;margin-top:4px}
 .trip .fx i{width:13px;height:13px;border-radius:50%;box-shadow:inset -2px -2px 0 rgba(0,0,0,.18)}
@@ -288,13 +294,14 @@ small{font-size:.5em;font-weight:600;color:var(--muted);margin-left:3px}
   .trip li.go em{position:static;justify-self:start}
 }
 /* the stage strip: names what the scene behind is showing; the current stage lights up as you scroll (all lit without WebGL) */
-.evo{margin-top:30px}
+.evo{margin-top:22px}
+.evo .k{margin-top:0}
 .evo ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;counter-reset:st}
-.evo li{display:grid;gap:4px;align-content:start;padding:10px 12px 12px;border-radius:10px;background:color-mix(in srgb,var(--paper) 82%,transparent);border:1.5px solid color-mix(in srgb,var(--ink) 12%,transparent);transition:border-color .4s,opacity .4s,transform .4s;position:relative}
+.evo li{display:grid;gap:3px;align-content:start;padding:8px 11px 10px;border-radius:10px;background:color-mix(in srgb,var(--paper) 82%,transparent);border:1.5px solid color-mix(in srgb,var(--ink) 12%,transparent);transition:border-color .4s,opacity .4s,transform .4s;position:relative}
 .evo li::before{counter-increment:st;content:"0" counter(st);font-family:var(--mono);font-size:11px;color:var(--accent)}
 .evo li:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:8px;height:1.5px;background:color-mix(in srgb,var(--ink) 30%,transparent)}
-.evo b{font-family:var(--display);font-size:16.5px;font-weight:740;line-height:1.2}
-.evo span{font-size:13px;line-height:1.38;color:var(--ink2)}
+.evo b{font-family:var(--display);font-size:15.5px;font-weight:740;line-height:1.2}
+.evo span{font-size:12.5px;line-height:1.35;color:var(--ink2)}
 .evo.live li{opacity:.45}
 .evo.live li.on{opacity:1;border-color:var(--accent);transform:translateY(-3px)}
 @media (max-width:640px){ .evo ol{grid-template-columns:minmax(0,1fr)} .evo li:not(:last-child)::after{display:none} }

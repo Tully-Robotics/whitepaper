@@ -208,7 +208,7 @@ function Evolve(build){
   const mix=(a,b,u,lift)=>({p:a.p.map((v,i)=>v+(b.p[i]-v)*u+(i===1?Math.sin(Math.PI*u)*lift:0)),t:a.t.map((v,i)=>v+(b.t[i]-v)*u)});
   let e=0;
   return {g,range:[-.3,.55],
-    stage:()=>e<.41?0:e<.62?1:2,
+    stage:()=>e<.5?0:e<.68?1:2,                           // the harvester once it stands built (year 4), the fleet from year 5
     carsOn:()=>e>=.5,                                        // the carriers waiting and driving to the depot: harvest only
     camAt(x){ const u1=ss(.3,.48,x), u2=ss(.62,.86,x); return u2>0?mix(B,C,u2,0):mix(A,B,u1,3.2); },
     enter(){ build.enter(); placeFleet(); },

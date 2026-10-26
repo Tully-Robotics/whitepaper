@@ -24,7 +24,7 @@ const SHOTS={
   hubs:       {set:'valley',                        fov:40, off:.2,  tod:.46, vs:1,   vf:0,   ts:1.5, still:'hive'},
   economics:  {p:[-4.6,3.5,0.8],  t:[0,1.1,0],      fov:42, off:.22, tod:.55, vs:1,   vf:.04, ts:1.5, still:'assisted'},
   investment: {p:[5.2,1.3,0.4],   t:[0,1.6,0],      fov:46, off:.2,  tod:.63, vs:1,   vf:.04, ts:1.2, still:'alley'},
-  roadmap:    {p:[5.4,2.1,.6],    t:[0,1.55,0],     fov:42, off:.2,  tod:.72, vs:1,   vf:.04, ts:1.5, still:'alley', set:'evolve', hold:.5},
+  roadmap:    {p:[5.4,2.1,.6],    t:[0,1.55,0],     fov:42, off:.2,  tod:.72, vs:1,   vf:.04, ts:1.5, still:'alley', set:'evolve'},
   competition:{p:[18,2.0,0.1],    t:[0,1.6,0],      fov:22, off:.2,  tod:.81, vs:1,   vf:.1,  ts:1.5, still:'alley'},
   validation: {p:[6.4,3.1,.7],     t:[0,1.4,0],      fov:42, off:.22, tod:.93, vs:1,   vf:.06, ts:1.2, still:'night'},
   end:        {p:[7.5,4.6,0.2],   t:[0,1.2,0],      fov:42, off:.2,  tod:1,   vs:.9,  vf:0,   ts:1.2, still:'night'}};
@@ -38,13 +38,23 @@ const TOD=[
   {k:1,   top:0x0b1522, mid:0x1b2a3a, bot:0x121a14, fog:0x121c26, sun:0x8899bb, si:.05,  hi:.06, ex:1.25}];
 
 // ---------------- scroll position → fractional chapter (f = i when chapter i is centred in the window)
-let anchors=[], maxS=1;
-function measure(){ maxS=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+// a pinned chapter (.pin) holds its panel on screen while the reader scrolls on for PIN windows; that scroll then plays the chapter
+// (the roadmap: the machine drives through the seven years, the scene behind evolves with it). Only where the panel fits the window.
+const PIN=2.4;
+let anchors=[], pinEnd=[], maxS=1;
+function pinLayout(){ for(const s of secs){ if(!s.classList.contains('pin')) continue; const panel=s.querySelector('.panel');
+    const on=!narrow()&&!reduced&&panel.getBoundingClientRect().height<=innerHeight-76, h=on?Math.round(innerHeight*(1+PIN))+'px':'';
+    s.classList.toggle('pinned',on); if(s.style.height!==h) s.style.height=h; } }
+const pinQ=i=>{ const s=secs[i]; return s.classList.contains('pinned')?clamp((scrollY-anchors[i])/Math.max(1,pinEnd[i]-anchors[i]),0,1):null; };
+function measure(){ pinLayout(); maxS=Math.max(1,document.documentElement.scrollHeight-innerHeight);
   // a chapter rests with its text centred, or, when the text is taller than the window, with the headline just under the bar
   anchors=secs.map(s=>{ const r=s.querySelector('.panel').getBoundingClientRect(), top=r.top+scrollY, room=innerHeight-140;
     return clamp(narrow()?top-innerHeight*.36:(r.height<room?top+r.height/2-innerHeight/2-20:top-90),0,maxS); });   // phone: robot above, text below
-  anchors[0]=0; anchors[NS-1]=maxS; placeStops(); if(typeof road==='function') road(); }
-function fAt(y){ for(let i=0;i<NS-1;i++) if(y<anchors[i+1]) return i+clamp((y-anchors[i])/Math.max(1,anchors[i+1]-anchors[i]),0,1); return NS-1; }
+  anchors[0]=0; anchors[NS-1]=maxS;
+  // a pinned chapter rests from the moment its panel sticks until the reader has scrolled through it
+  pinEnd=secs.map((s,i)=>{ if(!s.classList.contains('pinned')) return anchors[i]; const top=s.getBoundingClientRect().top+scrollY; anchors[i]=top; return top+innerHeight*PIN; });
+  placeStops(); if(typeof road==='function') road(); }
+function fAt(y){ for(let i=0;i<NS-1;i++) if(y<anchors[i+1]){ const a=pinEnd[i]; return y<=a?i:i+clamp((y-a)/Math.max(1,anchors[i+1]-a),0,1); } return NS-1; }
 const KEYS=['fov','off','tod','vs','vf','ts'];
 function spun(S,now){ if(!S.spin) return S.p; const a=now/1000*S.spin, c=Math.cos(a), s=Math.sin(a); return [S.p[0]*c-S.p[2]*s,S.p[1],S.p[0]*s+S.p[2]*c]; }
 // a shot in world coordinates: machine-frame shots ride along with the machine
@@ -98,6 +108,9 @@ function fill(now,f){
   for(const h of heads) fillWords(h,at(h.el,h.ci,.9,.34));
   for(const s of scrubs){ const p=Math.round(at(s,s._ci,.92,.5)*1000)/1000; if(s._p!==p){ s._p=p; s.style.setProperty('--p',p); } }
   for(const x of nums){ const p=at(x.el,x.ci,.96,.36), v=x.to*(1-(1-p)*(1-p)); if(v!==x.v){ x.v=v; x.el.textContent=fmt(v,x.d); } }
+  // the machine on the roadmap: driven by the pin, or (where the panel does not fit the window) kept level with the reading line
+  if(trip&&!reduced){ const q=pinQ(trip._ci), r=trip.getBoundingClientRect(), p=Math.round(clamp(q!==null?q/.8:(innerHeight*.55-r.top)/r.height,0,1)*1000)/1000;
+    if(trip._p!==p){ trip._p=p; trip.style.setProperty('--p',p); } }
   if(trip&&trip._p!==trip._m){ trip._m=trip._p; tripMove(+trip._p||0); }
   if(!choresEl) return; const struck=Math.floor(clamp(+choresEl._p||0,0,1)*(chores.length+1)*.999);
   chores.forEach((li,i)=>li.classList.toggle('gone',i<struck)); if(order) order.classList.toggle('on',struck>=chores.length); }
@@ -105,9 +118,10 @@ if(!reduced) document.body.classList.add('scrubbing');
 
 // ---------------- roadmap: a road through the seven years; the little machine drives it with the scroll
 const trip=$('trip'), way=trip&&trip.querySelector('.way'), done=trip&&trip.querySelector('.done'), tbot=trip&&trip.querySelector('.tbot');
-let tripLen=0;
+let tripLen=0, nodes=[];
+const tripLi=trip?[...trip.querySelectorAll('li')]:[];
 function road(){ if(!trip) return; const R=trip.getBoundingClientRect(), W=R.width;
-  let pts=[...trip.querySelectorAll('.node')].map(n=>{ const r=n.getBoundingClientRect(); return [r.left+r.width/2-R.left,r.top+r.height/2-R.top]; });
+  let pts=[...trip.querySelectorAll('.node')].map(n=>{ const r=n.getBoundingClientRect(); return [r.left+r.width/2-R.left,r.top+r.height/2-R.top]; }); nodes=pts.slice();
   // two rows: leave the first by the right-hand margin and come back into the second
   const rows=pts.some(p=>Math.abs(p[0]-pts[0][0])>4), out=[];
   pts.forEach((p,i)=>{ const q=pts[i-1]; if(rows&&q&&Math.abs(p[0]-q[0])<4&&p[1]-q[1]>30){ out.push([W+14,q[1]],[W+14,p[1]]); } out.push(p); });
@@ -116,9 +130,19 @@ function road(){ if(!trip) return; const R=trip.getBoundingClientRect(), W=R.wid
     if(n){ const l1=Math.hypot(x-q[0],y-q[1]), l2=Math.hypot(n[0]-x,n[1]-y), turn=Math.abs((x-q[0])*(n[1]-y)-(y-q[1])*(n[0]-x))>1, r=Math.min(24,l1/2,l2/2);
       if(turn&&l1&&l2){ d+=`L${x-(x-q[0])/l1*r} ${y-(y-q[1])/l1*r}Q${x} ${y} ${x+(n[0]-x)/l2*r} ${y+(n[1]-y)/l2*r}`; continue; } }
     d+=`L${x} ${y}`; }
-  way.setAttribute('d',d); done.setAttribute('d',d); tripLen=way.getTotalLength(); trip._m=-1; }
-function tripMove(p){ if(!tripLen) return; const L=tripLen*clamp(p*1.04,0,1), a=way.getPointAtLength(L), b=way.getPointAtLength(Math.min(tripLen,L+2));
-  tbot.style.transform=`translate(${a.x}px,${a.y}px)${b.x<a.x-.3?' scaleX(-1)':''}`; }
+  way.setAttribute('d',d); done.setAttribute('d',d); tripLen=way.getTotalLength(); trip._m=-1;
+  // where along the road each year's marker sits (share of the length)
+  const N=600, sm=[]; for(let k=0;k<=N;k++){ const q=way.getPointAtLength(tripLen*k/N); sm.push([q.x,q.y]); }
+  nodeAt=nodes.map(([x,y])=>{ let best=0, bd=1e9; sm.forEach(([sx,sy],k)=>{ const d=(sx-x)**2+(sy-y)**2; if(d<bd){ bd=d; best=k; } }); return best/N; }); }
+// the machine on the road; each year lights as it is reached; the scene behind follows the year the machine has got to:
+// years 1–3 the thinning robot, the harvester built on by year 4, the climb to the fleet towards year 5
+let nodeAt=[], evoE=0;
+const EVO=[[0,0],[2.55,.3],[3,.5],[3.55,.5],[3.85,.62],[4.6,.86],[6,1]];
+function tripMove(p){ if(!tripLen) return; const L=tripLen*clamp(p,0,1), a=way.getPointAtLength(L), b=way.getPointAtLength(Math.min(tripLen,L+2));
+  tbot.style.transform=`translate(${a.x}px,${a.y}px)${b.x<a.x-.3?' scaleX(-1)':''}`;
+  const fr=L/tripLen; let yr=0; for(let i=0;i<nodeAt.length-1;i++) if(fr>=nodeAt[i]) yr=i+clamp((fr-nodeAt[i])/Math.max(1e-6,nodeAt[i+1]-nodeAt[i]),0,1);
+  tripLi.forEach((li,i)=>li.classList.toggle('on',fr>=nodeAt[i]-.004));
+  for(let i=0;i<EVO.length-1;i++) if(yr<=EVO[i+1][0]){ evoE=EVO[i][1]+(EVO[i+1][1]-EVO[i][1])*(yr-EVO[i][0])/(EVO[i+1][0]-EVO[i][0]); break; } }
 
 // ---------------- the simulation
 let E=null, live=false, T=null;
@@ -207,7 +231,7 @@ function hideFor(name){ if(name==='orchard'&&!st.prev.size) return;
 // a set's own progress: 0 → 1 as its chapter scrolls into place
 let fNow=0;
 // a set may give its own range around its chapter (evolve plays out while the tall roadmap scrolls by)
-const setProgress=name=>{ const ci=SH.findIndex(S=>S.set===name), r=(sets[name]&&sets[name].range)||[-.42,-.02]; return ci<0?1:clamp((fNow-(ci+r[0]))/(r[1]-r[0]),0,1); };
+const setProgress=name=>{ if(name==='evolve') return evoE; const ci=SH.findIndex(S=>S.set===name), r=(sets[name]&&sets[name].range)||[-.42,-.02]; return ci<0?1:clamp((fNow-(ci+r[0]))/(r[1]-r[0]),0,1); };
 function studioSky(){ E.skyUni.top.value.copy(palette.studio.top); E.skyUni.mid.value.copy(palette.studio.mid); E.skyUni.bot.value.copy(palette.studio.mid);
   E.scene.fog.color.copy(palette.studio.mid); E.sun.color.copy(palette[1].sun); E.sun.intensity=2.2; E.hemi.intensity=.7; E.renderer.toneMappingExposure=1; }
 // camera: eased toward the scroll-blended shot every frame, with a slow drift so it never freezes
