@@ -16,7 +16,7 @@
 <link rel="preload" href="fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="img/alley.webp" as="image">
 <link rel="stylesheet" href="assets/fonts.05b06388.css">
-<link rel="stylesheet" href="assets/story.dd563166.css">
+<link rel="stylesheet" href="assets/story.058fbde9.css">
 </head>
 <body>
 <!-- The orchard: the live simulation model, fixed behind every chapter. Scrolling moves the camera; the machine never stops. -->
@@ -276,15 +276,9 @@
 <!-- 00 -->
 <section class="sc hero" id="top" data-shot="hero" data-name="Tully">
   <div class="wrap"><div class="panel wide">
-    <span class="eyebrow">Tully Robotics <b>·</b> White paper 2026</span>
+    <span class="eyebrow">Tully Robotics</span>
     <h1 class="hv">Autonomous <em>workforce</em> for fruit farms</h1>
     <p class="lead">We build and operate an autonomous robotic service that harvests, thins and takes on other orchard tasks. We start with the biggest market: apples.</p>
-    <div class="kpis">
-      <div><b><span class="num" data-to="2">2</span><small>×</small></b><span>as fast as hand picking, at 10 % lower cost per hectare</span></div>
-      <div><b><span class="num" data-to="60">60</span><small>bn €</small></b><span>spent on orchard labour every year</span></div>
-      <div><b><span class="num" data-to="1.3" data-dec="1">1.3</span><small>seasons</small></b><span>to break even, per robot</span></div>
-      <div><b><span class="num" data-to="0.7" data-dec="1">0.7</span><small>s</small></b><span>per apple, whole machine</span></div>
-    </div>
     <p class="hint"><span class="mouse"></span>Scroll. The machine behind the text is already picking.</p>
   </div></div>
 </section>
@@ -292,44 +286,51 @@
 <!-- 01 -->
 <section class="sc" id="problem" data-shot="problem" data-name="Problem">
   <div class="wrap"><div class="panel wide">
-    <span class="eyebrow"><b>01</b> · Problem and solution</span>
-    <h2 class="hv">Fruit farm work can now be <em>automated</em></h2>
-    <div class="ps" data-scrub>
-      <div>
-        <p class="k">Problem</p>
-        <ol class="pl">
-          <li style="--i:0"><b>Labour costs rise faster than fruit prices</b><span>Manual work takes up to 40 % of production costs, cutting into farm profits everywhere.</span></li>
-          <li style="--i:1"><b>Seasonal workers are scarce</b><span>Fewer come each season as the economy in their home countries improves.</span></li>
-          <li style="--i:2"><b>Hiring costs hidden time</b><span>Recruiting, housing, transport and paperwork, every season, before the harvest starts.</span></li>
-        </ol>
+    <span class="eyebrow"><b>01</b> · Problem</span>
+    <h2 class="hv">Labour is <em>scarce</em> and <em>costly</em></h2>
+    <div class="cost" data-scrub>
+      <p class="k">Labour is costly</p>
+      <div class="cost-h"><b><span class="num" data-to="51">51</span><small>%</small></b><span>of an apple orchard's yearly running costs is hand labour: pruning, thinning, picking</span></div>
+      <div class="cbar" role="img" aria-label="Yearly running costs of an apple orchard: hand labour 51 %, plant protection and fertiliser 17 %, machinery and fuel 16 %, irrigation and frost protection 9 %, other 7 %">
+        <i class="lab" style="--w:51"><span>Hand labour</span></i><i style="--w:17"></i><i style="--w:16"></i><i style="--w:9"></i><i style="--w:7"></i>
       </div>
-      <div class="sol">
-        <p class="k">Solution</p>
-        <ol class="pl">
-          <li style="--i:3"><b>Works outdoors without harming the fruit</b><span>Built for rain, changing light and night. Cameras find every apple; the hand cuts the stem.</span></li>
-          <li style="--i:4"><b>Faster than people, on the farmer's terms</b><span>Twice as fast per hectare. Farmers order the finished work; there is no robot to buy.</span></li>
-          <li style="--i:5"><b>Affordable to build</b><span>Robot arms, cameras and computing cost a fraction of what they did, so we build from standard parts.</span></li>
-        </ol>
-      </div>
+      <p class="cleg"><span>Spraying, fertiliser 17 %</span><span>Machinery, fuel 16 %</span><span>Irrigation 9 %</span><span>Other 7 %</span></p>
     </div>
-    <a class="deep" href="paper.html#problem">Problem and solution in the white paper</a>
+    <div class="trend" data-scrub>
+      <p class="k">Seasonal workers are scarce</p>
+      <p class="trend-h">Their home economies are catching up, so fewer come each season</p>
+      <svg viewBox="0 0 640 200" role="img" aria-label="GDP per head in Romania and Poland, as a share of the EU average, 2005 to 2025: Romania from 36 % to 78 %, Poland from 52 % to 81 %">
+        <line class="gl" x1="40" x2="560" y1="134.3" y2="134.3"/><line class="gl" x1="40" x2="560" y1="77.1" y2="77.1"/>
+        <line class="eu" x1="40" x2="560" y1="20" y2="20"/><text class="tl" x="40" y="13">EU average = 100 %</text>
+        <text class="tl" x="0" y="138">50 %</text><text class="tl" x="0" y="81">75 %</text>
+        <path class="ln pl" pathLength="1" d="M40 130.6L118 120.1L170 103.9L222 94.3L300 89.0L378 85.1L430 69.6L482 70.7L534 69.6L560 63.2"/>
+        <path class="ln ro" pathLength="1" d="M40 167.2L118 131.3L170 128.8L222 119.9L300 120.8L378 100.2L430 86.5L482 85.6L534 72.8L560 70.3"/>
+        <g class="ends"><circle class="pl" cx="560" cy="63.2" r="4.5"/><circle class="ro" cx="560" cy="70.3" r="4.5"/>
+          <text class="vl pl" x="570" y="58">Poland 81 %</text><text class="vl ro" x="570" y="84">Romania 78 %</text></g>
+        <text class="tl" x="40" y="196">2005</text><text class="tl" x="560" y="196" text-anchor="end">2025</text>
+      </svg>
+      <p class="cap">GDP per head in the main home countries of seasonal workers, % of the EU average. On German farms, seasonal workers fell by <b>27 %</b> from 2010 to 2023.</p>
+    </div>
+    <a class="deep" href="paper.html#problem">Learn more about the problem</a>
   </div></div>
 </section>
 
 <!-- 02 -->
-<section class="sc" id="technology" data-shot="technology" data-name="Technology">
+<section class="sc" id="solution" data-shot="solution" data-name="Solution">
   <div class="wrap"><div class="panel wide">
-    <span class="eyebrow"><b>02</b> · Technical concept</span>
-    <h2 class="hv">How the machine works: one apple from <em>tree to bin</em></h2>
-    <ol class="flow" data-scrub>
-      <li style="--i:0"><i>1</i><b>See</b><span>12 cameras on the masts and 32 in the hands feed one shared map of every apple</span></li>
-      <li style="--i:1"><i>2</i><b>Reach</b><span>8 cobots on 4 rails cover the full 3 m fruiting wall</span></li>
-      <li style="--i:2"><i>3</i><b>Cut</b><span>a guarded scissor cuts the stem; no twist and pull, no harm to the tree</span></li>
-      <li style="--i:3"><i>4</i><b>Grade</b><span>a 360° camera sorter splits fresh from industry fruit</span></li>
-      <li style="--i:4"><i>5</i><b>Bin</b><span>a padded spiral lowers it in; full bins drive themselves to the staging area</span></li>
-    </ol>
-    <p class="note">Built from standard parts: a Frucotec orchard platform, Nature Robots autonomy, an NVIDIA Jetson AGX Orin and a Beckhoff PLC. Work lights and a light in every hand keep it picking 20 hours a day.</p>
-    <a class="deep" href="paper.html#technology">Open the live simulation lab</a>
+    <span class="eyebrow"><b>02</b> · Solution</span>
+    <h2 class="hv">Fruit farm work, <em>automated</em></h2>
+    <p class="lead">Tully builds an autonomous robotic platform for the field work in orchards, starting with thinning and harvesting.</p>
+    <div class="kit" data-scrub role="img" aria-label="One base platform. With the arms it thins; with the arms, the fruit line and the bin it harvests.">
+      <div class="kr" style="--i:0"><span class="mod" style="--i:0"><svg viewBox="0 0 40 28"><rect x="6" y="4" width="28" height="3" rx="1"/><rect x="8" y="6" width="3" height="14"/><rect x="29" y="6" width="3" height="14"/><circle cx="10" cy="23" r="3.6"/><circle cx="30" cy="23" r="3.6"/></svg>Base</span><b>+</b><span class="mod" style="--i:1"><svg viewBox="0 0 40 28"><path d="M8 24V14l10-6 9 5"/><path d="M27 13l5 5"/><circle cx="8" cy="24" r="3"/><path class="tip" d="M30 17l5 2-2 4"/></svg>Arms</span><b>=</b><span class="job" style="--i:2">Thinning</span></div>
+      <div class="kr" style="--i:1"><span class="mod" style="--i:0"><svg viewBox="0 0 40 28"><rect x="6" y="4" width="28" height="3" rx="1"/><rect x="8" y="6" width="3" height="14"/><rect x="29" y="6" width="3" height="14"/><circle cx="10" cy="23" r="3.6"/><circle cx="30" cy="23" r="3.6"/></svg>Base</span><b>+</b><span class="mod" style="--i:1"><svg viewBox="0 0 40 28"><path d="M8 24V14l10-6 9 5"/><path d="M27 13l5 5"/><circle cx="8" cy="24" r="3"/><path class="tip" d="M30 17l5 2-2 4"/></svg>Arms</span><b>+</b><span class="mod" style="--i:3"><svg viewBox="0 0 40 28"><path d="M6 10h28l-3 14H9z"/><circle class="ap" cx="15" cy="9" r="3.2"/><circle class="ap" cx="22" cy="8" r="3.2"/><circle class="ap" cx="28" cy="9.5" r="3"/></svg>Fruit line, bin</span><b>=</b><span class="job" style="--i:4">Harvesting</span></div>
+    </div>
+    <div class="pillars" data-scrub>
+      <div style="--i:0"><b>Robotic system</b><span>Cameras find every apple, the hand cuts the stem, day and night</span></div>
+      <div style="--i:1"><b>Modular</b><span>One base, a kit for each job in the orchard</span></div>
+      <div style="--i:2"><b>Sold as a service</b><span>Farmers book the work, not the machine</span></div>
+    </div>
+    <a class="deep" href="paper.html#technology">See the machine at work</a>
   </div></div>
 </section>
 
@@ -346,12 +347,11 @@
       <div style="--i:2"><img src="img/p-raphael.webp" width="320" height="320" loading="lazy" alt="Portrait of Raphael Joppi"><b>Raphael Joppi</b><em>Co-founder &amp; CPO</em><span>Takes robots from concept to deployment; grew up in an apple-farming family</span>
         <p class="logos" aria-label="Previously at"><i class="lgm" role="img" aria-label="Kinexon" style="-webkit-mask-image:url(img/logos/kinexon.png);mask-image:url(img/logos/kinexon.png);width:124px"></i><i class="lgm" role="img" aria-label="Franka Emika" style="-webkit-mask-image:url(img/logos/franka.png);mask-image:url(img/logos/franka.png);width:68px"></i><i class="lgm" role="img" aria-label="Motius" style="-webkit-mask-image:url(img/logos/motius.png);mask-image:url(img/logos/motius.png);width:17px"></i></p></div>
     </div>
-    <div class="adv">
-      <img src="img/p-ines.webp" width="345" height="345" loading="lazy" alt="Portrait of Dr. Ines Hanrahan">
-      <p><b>Advisor: Dr. Ines Hanrahan</b>Executive Director of the Washington Tree Fruit Research Commission; ten years in tree-fruit robotics research and grower needs.</p>
+    <p class="k">Advisors</p>
+    <div class="advs">
+      <div class="adv"><img src="img/p-ines.webp" width="345" height="345" loading="lazy" alt="Portrait of Dr. Ines Hanrahan"><p><b>Dr. Ines Hanrahan</b>Executive Director of the Washington Tree Fruit Research Commission; ten years in tree-fruit robotics research and grower needs.</p></div>
     </div>
-    <p class="note"><b>First hires:</b> two in computer vision, one each in robotics, gripper design and system integration, and a founders associate.</p>
-    <a class="deep" href="paper.html#team">The team in the white paper</a>
+    <a class="deep" href="paper.html#team">Meet the team</a>
   </div></div>
 </section>
 
@@ -378,7 +378,7 @@
       <div><b>650–700<small>h</small></b><span>of hand work per hectare, each season</span></div>
       <div><b><span class="num" data-to="68">68</span><small>%</small></b><span>of US apples grow in Washington</span></div>
     </div>
-    <a class="deep" href="paper.html#market">The market in the white paper</a>
+    <a class="deep" href="paper.html#market">Explore the market</a>
   </div></div>
 </section>
 
@@ -386,22 +386,21 @@
 <section class="sc" id="hubs" data-shot="hubs" data-name="Business model">
   <div class="wrap"><div class="panel wide">
     <span class="eyebrow"><b>05</b> · Business model</span>
-    <h2 class="hv">Farmers buy <em>finished work</em>; we grow region by region</h2>
-    <div class="chores" id="chores" data-scrub>
-      <p class="k">A grower's season today</p>
-      <ul><li>Recruiting</li><li>Housing</li><li>Transport</li><li>Paperwork</li><li>Supervision</li><li>A robot to buy</li></ul>
-      <div class="order">
-        <p class="big">One order.</p>
-        <p>Book the blocks and dates; pay for the finished work. Tully brings, runs and maintains the machines, and carries the performance risk.</p>
-      </div>
+    <h2 class="hv">Sold as a <em>service</em></h2>
+    <div class="bm" data-scrub>
+      <div class="bmc" style="--i:0"><p class="k">Service</p>
+        <ul class="ticks"><li><b>A fleet busy all season</b><span>More revenue and margin than selling each robot once</span></li><li><b>Fits how farms work</b><span>Booked like a seasonal crew</span></li><li><b>Nothing to buy</b><span>No upfront investment for the farmer</span></li></ul></div>
+      <div class="bmc who" style="--i:1"><p class="k">Customer</p><p class="big">The farmer</p><span>The one who pays for seasonal crews today. Tully sends robots instead of a crew.</span></div>
     </div>
-    <ol class="ladder" data-scrub>
-      <li class="now" style="--i:0"><b>Now</b><span>Iterate in South Tyrol and at Bodensee until the machine meets commercial requirements</span></li>
-      <li style="--i:1"><b>Next</b><span>One regional hub delivers reliably and profitably: fleet, field supervision, maintenance and local sales</span></li>
-      <li style="--i:2"><b>Then</b><span>Replicate the hub in new regions and the Southern Hemisphere</span></li>
-    </ol>
-    <p class="note"><b>Ideal customer:</b> every fruit farm that employs seasonal workers for the harvest. Apples first, then pears, stone fruit, citrus and avocados, in dense regions where one hub serves many farms.</p>
-    <a class="deep" href="paper.html#hubs">The business model in the white paper</a>
+    <div class="hubflow" data-scrub>
+      <p class="k">Hubs</p>
+      <ol>
+        <li style="--i:0"><b>Orchards cluster</b><span>Climate and terroir pack fruit farms into dense regions</span></li>
+        <li style="--i:1"><b>One hub per region</b><span>Storage, dispatch, maintenance, live fleet monitoring</span></li>
+        <li style="--i:2"><b>Low cost to serve</b><span>Many customers close by: little overhead, fast help in the field</span></li>
+      </ol>
+    </div>
+    <a class="deep" href="paper.html#hubs">Learn more about the model</a>
   </div></div>
 </section>
 
@@ -409,23 +408,27 @@
 <section class="sc" id="economics" data-shot="economics" data-name="Unit economics">
   <div class="wrap"><div class="panel wide">
     <span class="eyebrow"><b>06</b> · Unit economics</span>
-    <h2 class="hv">Why our <em>service model</em> beats selling machines</h2>
-    <div class="bf" data-scrub>
-      <p class="lg"><span class="a">Semi-automatic assisted platform, 6 workers</span><span class="t">Tully, 8 arms, autonomous</span></p>
-      <div class="r" style="--i:0;--a:100%;--b:78%"><span class="m">Harvesting speed, whole system <small>lower is better</small></span><i class="a"><b>0.90 s</b></i><i class="b"><b>0.70 s</b></i></div>
-      <div class="r" style="--i:1;--a:50%;--b:100%"><span class="m">Operating hours per day</span><i class="a"><b>10 h</b></i><i class="b"><b>20 h</b></i></div>
-      <div class="r" style="--i:2;--a:44%;--b:100%"><span class="m">Harvested per day</span><i class="a"><b>7.0 t</b></i><i class="b"><b>15.9 t</b></i></div>
-      <div class="r" style="--i:3;--a:100%;--b:45%"><span class="m">Days per hectare <small>lower is better</small></span><i class="a"><b>7.4</b></i><i class="b"><b>3.3</b></i></div>
-      <div class="r" style="--i:4;--a:100%;--b:90%"><span class="m">Cost per hectare to the farmer <small>lower is better</small></span><i class="a"><b>6,195 €</b></i><i class="b"><b>5,576 €</b></i></div>
-    </div>
+    <h2 class="hv">Each robot pays for itself in <em>1.3&nbsp;seasons</em></h2>
     <p class="k">One robot, one season</p>
     <div class="season" data-scrub>
-      <div><b><span class="num" data-to="41">41</span><small>ha</small></b><span>worked in 133 operating days</span></div>
       <div><b><span class="num" data-to="227909">227,909</span><small>€</small></b><span>revenue</span></div>
-      <div><b><span class="num" data-to="195658">195,658</span><small>€</small></b><span>gross profit, 86 % margin</span></div>
-      <div><b><span class="num" data-to="1.3" data-dec="1">1.3</span><small>seasons</small></b><span>to break even, for 10+ years of service</span></div>
+      <div><b><span class="num" data-to="195658">195,658</span><small>€</small></b><span>gross profit</span></div>
+      <div><b><span class="num" data-to="86">86</span><small>%</small></b><span>gross margin</span></div>
+      <div><b>≈<span class="num" data-to="1.7" data-dec="1">1.7</span><small>M€</small></b><span>gross profit over 10 seasons, after the robot's cost</span></div>
     </div>
-    <a class="deep" href="paper.html#economics">Try the model yourself</a>
+    <div class="pay" data-scrub role="img" aria-label="Ten seasons of service: the robot's 260,000 euro cost is earned back after 1.3 seasons, the rest is profit">
+      <div class="pay-bar"><i class="back"></i><i class="gain"></i><span class="be">Break-even · 1.3 seasons</span></div>
+      <p><span class="a">Pays back its 260,000 € cost</span><span class="b">Profit, for 10+ years of service</span></p>
+    </div>
+    <div class="bf" data-scrub>
+      <p class="lg"><span class="t">Where a season's revenue goes</span></p>
+      <div class="r" style="--i:0;--b:100%"><span class="m">Revenue <small>41 ha at 5,576 € per hectare</small></span><i class="b"><b>227,909 €</b></i></div>
+      <div class="r cost" style="--i:1;--b:2.7%"><span class="m">Operation <small>support, transport, energy</small></span><i class="b"><b>6,251 €</b></i></div>
+      <div class="r cost" style="--i:2;--b:11.4%"><span class="m">Maintenance and machine <small>10 % of the system cost</small></span><i class="b"><b>26,000 €</b></i></div>
+      <div class="r gp" style="--i:3;--b:85.8%"><span class="m">Gross profit</span><i class="b"><b>195,658 €</b></i></div>
+    </div>
+    <p class="perf"><span>Against an assisted picking platform:</span> <b>0.7 s</b> vs 0.9 s per apple · <b>20 h</b> vs 10 h a day · <b>3.3</b> vs 7.4 days per hectare · <b>−10 %</b> per hectare for the farmer</p>
+    <a class="deep" href="paper.html#economics">Run the numbers yourself</a>
   </div></div>
 </section>
 
@@ -439,98 +442,110 @@
       <div class="stack"><i style="--w:64%">64 %</i><i style="--w:16%">16 %</i><i style="--w:10%">10 %</i><i style="--w:8%">8 %</i></div>
       <p><span>Team and salaries</span><span>Prototyping and field testing</span><span>External services</span><span>Company operations</span></p>
     </div>
-    <a class="deep" href="paper.html#investment">The round in the white paper</a>
+    <a class="deep" href="paper.html#investment">Learn more about the round</a>
   </div></div>
 </section>
 
 <!-- 08 -->
 <section class="sc" id="roadmap" data-shot="roadmap" data-name="Roadmap">
   <div class="wrap"><div class="panel wide">
-    <span class="eyebrow"><b>08</b> · Roadmap and go-to-market</span>
-    <h2 class="hv">From first prototype to <em>global launch</em> in four years</h2>
-    <div class="road" data-scrub>
-      <div class="yr" style="--i:0"><h4>Year 1</h4><p>Autonomous thinning prototype</p><i class="off now">Off-season</i><i class="thin">Thinning</i><i class="harv">Harvest</i><em>Prototype proven</em></div>
-      <div class="yr" style="--i:1"><h4>Year 2</h4><p>Commercial thinning in South Tyrol</p><i class="off">Off-season</i><i class="thin">Thinning</i><i class="harv">Harvest</i><em>Commercial thinning</em></div>
-      <div class="yr" style="--i:2"><h4>Year 3</h4><p>Hubs in South Tyrol, Bodensee, Washington</p><i class="off">Off-season</i><i class="thin">Thinning</i><i class="harv">Harvest</i><em>Grade A harvesting</em></div>
-      <div class="yr" style="--i:3"><h4>Year 4</h4><p>The same platform in every hub region</p><i class="off">Off-season</i><i class="thin">Thinning</i><i class="harv">Harvest</i><em>Global scale</em></div>
-      <div class="round">This round: years 1 and 2</div>
+    <span class="eyebrow"><b>08</b> · Roadmap</span>
+    <h2 class="hv">Commercial use in <em>2&nbsp;years</em></h2>
+    <div class="trip" id="trip" data-scrub>
+      <svg class="rd" aria-hidden="true"><path class="way"/><path class="done" pathLength="1"/></svg>
+      <div class="tbot" aria-hidden="true"><svg viewBox="0 0 30 24"><rect class="fr" x="5" y="1" width="20" height="2.6" rx="1"/><rect class="fr" x="6" y="3" width="2.4" height="14"/><rect class="fr" x="21.6" y="3" width="2.4" height="14"/><rect class="bn" x="10" y="10.5" width="10" height="5.5" rx="1"/><circle class="wh" cx="8" cy="19.5" r="3"/><circle class="wh" cx="22" cy="19.5" r="3"/></svg></div>
+      <span class="round">This round</span>
+      <ol>
+        <li style="--i:0"><i class="node"></i><h4>Year 1</h4><p>Working prototype: finds the apples and cuts them</p><span class="n"><b>2</b> robots</span><span class="h">0 hubs</span><span class="fx"><i class="f-apple" title="Apples"></i></span></li>
+        <li style="--i:1"><i class="node"></i><h4>Year 2</h4><p>Robust machine with pilot customers: thinning, industrial apples</p><span class="n"><b>2</b> robots</span><span class="h">0 hubs</span><span class="fx"><i class="f-apple" title="Apples"></i></span></li>
+        <li class="go" style="--i:2"><i class="node"></i><h4>Year 3</h4><p>Commercial thinning and industrial apples from the first hub</p><span class="n"><b>7</b> robots</span><span class="h">1 hub</span><span class="fx"><i class="f-apple" title="Apples"></i></span><em>Commercial</em></li>
+        <li style="--i:3"><i class="node"></i><h4>Year 4</h4><p>Thinning to harvesting in Washington, Bodensee, South Tyrol</p><span class="n"><b>100</b> robots</span><span class="h">3 hubs</span><span class="fx"><i class="f-apple" title="Apples"></i></span></li>
+        <li style="--i:4"><i class="node"></i><h4>Year 5</h4><p>Into every leading apple region</p><span class="n"><b>250</b> robots</span><span class="h">8 hubs</span><span class="fx"><i class="f-apple" title="Apples"></i></span></li>
+        <li style="--i:5"><i class="node"></i><h4>Year 6</h4><p>New fruits, global scale</p><span class="n"><b>600</b> robots</span><span class="h">18 hubs</span><span class="fx"><i class="f-apple" title="Apples"></i><i class="f-pear" title="Pears"></i><i class="f-citrus" title="Citrus"></i></span></li>
+        <li style="--i:6"><i class="node"></i><h4>Year 7</h4><p>More fruits, global scale</p><span class="n"><b>1,400</b> robots</span><span class="h">40 hubs</span><span class="fx"><i class="f-apple" title="Apples"></i><i class="f-pear" title="Pears"></i><i class="f-citrus" title="Citrus"></i><i class="f-kiwi" title="Kiwi"></i><i class="f-peach" title="Peaches"></i></span></li>
+      </ol>
     </div>
-    <p class="k">Scaling to 100 M€ ARR</p>
-    <div class="arr" data-scrub>
-      <div><b class="num" data-to="440">440</b><span>autonomous robots</span></div>
-      <div><b>≈<span class="num" data-to="18000">18,000</span><small>ha</small></b><span>harvested a year</span></div>
-      <div><b><span class="num" data-to="3.9" data-dec="1">3.9</span><small>%</small></b><span>of the obtainable market; 0.08 % of global tree fruit</span></div>
-      <div><b>≈<span class="num" data-to="50">50</span></b><span>people in regional field operations</span></div>
+    <p class="k">One platform, evolving</p>
+    <div class="evo" data-scrub>
+      <div class="ev" style="--i:0"><div class="pic"><svg viewBox="0 0 64 52"><rect class="fr" x="12" y="6" width="40" height="4" rx="1.5"/><rect class="fr" x="14" y="9" width="4" height="30"/><rect class="fr" x="46" y="9" width="4" height="30"/><path class="arm" d="M18 22l-9 4 -3 6M46 18l9 5 2 6"/><circle class="wh" cx="16" cy="43" r="5"/><circle class="wh" cx="48" cy="43" r="5"/></svg></div><b>Thinning</b><span class="when">From year 2</span><span class="sz">≈ 0.8 bn € a year</span><span>Arms only, no fruit to handle: the shortest way to market</span></div>
+      <i class="arr" aria-hidden="true"></i>
+      <div class="ev" style="--i:1"><div class="pic"><svg viewBox="0 0 64 52"><rect class="fr" x="12" y="6" width="40" height="4" rx="1.5"/><rect class="fr" x="14" y="9" width="4" height="30"/><rect class="fr" x="46" y="9" width="4" height="30"/><path class="arm" d="M18 22l-9 4 -3 6M46 18l9 5 2 6M18 32l-9 3M46 31l9 3"/><rect class="bn" x="23" y="26" width="18" height="11" rx="1.5"/><circle class="ap" cx="28" cy="25" r="2.6"/><circle class="ap" cx="34" cy="24.5" r="2.6"/><circle class="wh" cx="16" cy="43" r="5"/><circle class="wh" cx="48" cy="43" r="5"/></svg></div><b>Harvesting</b><span class="when">From year 4</span><span class="sz">≈ 2.2 bn € a year</span><span>Same base, plus the fruit line, sorter and bins</span></div>
+      <i class="arr" aria-hidden="true"></i>
+      <div class="ev" style="--i:2"><div class="pic"><svg viewBox="0 0 64 52"><rect class="fr" x="12" y="6" width="40" height="4" rx="1.5"/><rect class="fr" x="14" y="9" width="4" height="30"/><rect class="fr" x="46" y="9" width="4" height="30"/><path class="arm" d="M18 22l-9 4 -3 6M46 18l9 5 2 6M18 32l-9 3M46 31l9 3"/><rect class="bn" x="23" y="26" width="18" height="11" rx="1.5"/><circle class="ap" cx="28" cy="25" r="2.6"/><circle class="ap" cx="34" cy="24.5" r="2.6"/><path class="tool" d="M27 2l5-0 0 4M37 2l-3 4M4 14l4-3M60 14l-4-3"/><circle class="wh" cx="16" cy="43" r="5"/><circle class="wh" cx="48" cy="43" r="5"/></svg></div><b>Every orchard job</b><span class="when">Next</span><span class="sz">≈ 1 bn € more</span><span>Pruning, scouting and the rest of the season</span></div>
     </div>
-    <a class="deep" href="paper.html#roadmap">The roadmap season by season</a>
+    <a class="deep" href="paper.html#roadmap">See the roadmap season by season</a>
   </div></div>
 </section>
 
 <!-- 09 -->
 <section class="sc" id="competition" data-shot="competition" data-name="Competition">
   <div class="wrap"><div class="panel wide">
-    <span class="eyebrow"><b>09</b> · Competition and reasons for failure</span>
-    <h2 class="hv">Apple harvesting is still <em>unsolved.</em> Here is why earlier robots failed</h2>
-    <p class="lead">Robots already pick other fruits commercially. Apples, the largest market, remain open.</p>
+    <span class="eyebrow"><b>09</b> · Competition</span>
+    <h2 class="hv">No apple robot has reached <em>commercial use</em> yet</h2>
+    <p class="k">Who has tried, and how far they got</p>
     <div class="mat" data-scrub role="img" aria-label="How far each company has come, from research to commercial use. Apples: Tully at prototype, FFRobotics, Abundant Robotics (closed) and Tevel in field pilots, Advanced Farm (closed). Other fruits: Picker Agrobotics, Agrobot, Tevel, Advanced Farm (closed), Harvest CROO furthest along."><div class="mat-in">
-      <div class="lane"><h5>Apples, the largest market</h5><div class="pins" style="height:80px">
-        <span class="us" style="--x:18%;--r:0;--i:0">TULLY<i>.</i></span><span style="--x:29%;--r:0;--i:1">FFRobotics</span><span class="dead" style="--x:34%;--r:1;--i:2">Abundant</span><span style="--x:40%;--r:0;--i:3">Tevel</span><span class="dead" style="--x:47%;--r:2;--i:4">Advanced Farm</span></div></div>
-      <div class="lane"><h5>Other fruits</h5><div class="pins">
-        <span style="--x:20%;--r:0;--i:0">Picker</span><span style="--x:34%;--r:1;--i:1">Agrobot</span><span style="--x:40%;--r:0;--i:2">Tevel</span><span class="dead" style="--x:48%;--r:1;--i:3">Advanced Farm</span><span style="--x:72%;--r:0;--i:4">Harvest CROO</span></div></div>
-      <div class="axis"><span style="width:10.65%">Research</span><span style="width:14.05%">Prototype</span><span style="width:18.55%">Field pilots</span><span style="width:24.46%">Scale-up</span><span style="width:32.29%">Commercial</span></div>
+      <div class="lane"><h5>Apples, the largest market</h5><div class="pins" style="height:122px">
+        <span class="us" style="--x:18%;--r:0;--i:0">TULLY<i>.</i></span>
+        <span style="--x:29%;--r:1;--i:1"><i class="lgm" role="img" aria-label="FFRobotics" style="-webkit-mask-image:url(img/logos/ffrobotics.png);mask-image:url(img/logos/ffrobotics.png);width:97px"></i></span>
+        <span class="dead" style="--x:34%;--r:2;--i:2"><i class="lgm" role="img" aria-label="Abundant Robotics, closed" style="-webkit-mask-image:url(img/logos/abundant.png);mask-image:url(img/logos/abundant.png);width:61px"></i><em>closed</em></span>
+        <span style="--x:40%;--r:0;--i:3"><i class="lgm" role="img" aria-label="Tevel" style="-webkit-mask-image:url(img/logos/tevel.png);mask-image:url(img/logos/tevel.png);width:55px"></i></span>
+        <span class="dead" style="--x:47%;--r:3;--i:4"><i class="lgm" role="img" aria-label="Advanced Farm, closed" style="-webkit-mask-image:url(img/logos/advancedfarm.png);mask-image:url(img/logos/advancedfarm.png);width:84px"></i><em>closed</em></span></div>
+        <div class="axis"><span style="width:10.65%">Research</span><span style="width:14.05%">Prototype</span><span style="width:18.55%">Field pilots</span><span style="width:24.46%">Scale-up</span><span style="width:32.29%">Commercial</span></div></div>
+      <div class="lane"><h5>Other fruits</h5><div class="pins" style="height:92px">
+        <span style="--x:20%;--r:0;--i:0"><i class="lgm" role="img" aria-label="Picker Agrobotics" style="-webkit-mask-image:url(img/logos/picker.png);mask-image:url(img/logos/picker.png);width:57px"></i></span>
+        <span style="--x:34%;--r:1;--i:1"><i class="lgm" role="img" aria-label="Agrobot" style="-webkit-mask-image:url(img/logos/agrobot.png);mask-image:url(img/logos/agrobot.png);width:71px"></i></span>
+        <span style="--x:40%;--r:0;--i:2"><i class="lgm" role="img" aria-label="Tevel" style="-webkit-mask-image:url(img/logos/tevel.png);mask-image:url(img/logos/tevel.png);width:55px"></i></span>
+        <span class="dead" style="--x:48%;--r:2;--i:3"><i class="lgm" role="img" aria-label="Advanced Farm, closed" style="-webkit-mask-image:url(img/logos/advancedfarm.png);mask-image:url(img/logos/advancedfarm.png);width:84px"></i><em>closed</em></span>
+        <span style="--x:72%;--r:0;--i:4"><i class="lgm" role="img" aria-label="Harvest CROO" style="-webkit-mask-image:url(img/logos/harvestcroo.png);mask-image:url(img/logos/harvestcroo.png);width:110px"></i></span></div>
+        <div class="axis"><span style="width:10.65%">Research</span><span style="width:14.05%">Prototype</span><span style="width:18.55%">Field pilots</span><span style="width:24.46%">Scale-up</span><span style="width:32.29%">Commercial</span></div></div>
+      
     </div></div>
-    <div class="fails" data-scrub>
-      <div style="--i:0"><em>01</em><b>Built from the ground up</b><span>Abundant's dedicated vacuum harvester was over-engineered and costly; it closed in 2021.</span><p><strong>Tully</strong> integrates off-the-shelf cobots, platforms and cameras.</p></div>
-      <div style="--i:1"><em>02</em><b>Too long to market</b><span>Agrobot developed manipulation, navigation, vehicle and outdoor reliability at once.</span><p><strong>Tully</strong> sells thinning first, from year 2.</p></div>
-      <div style="--i:2"><em>03</em><b>Weaker AI and sensors</b><span>Earlier vision struggled with leaves in the way, changing light and night.</span><p><strong>Tully</strong> builds on today's models, depth cameras and edge compute.</p></div>
-      <div style="--i:3"><em>04</em><b>Selling the robot</b><span>Growers were asked to buy expensive, unproven machines.</span><p><strong>Tully</strong> sells finished work and carries the risk.</p></div>
+    <div class="why" data-scrub>
+      <p class="k">Why they failed, and what Tully does</p>
+      <div class="wr" style="--i:0"><s>Built from scratch</s><i class="arw"></i><span>Off-the-shelf arms, platforms and cameras</span></div>
+      <div class="wr" style="--i:1"><s>Too long to market</s><i class="arw"></i><span>Thinning first, from year 2</span></div>
+      <div class="wr" style="--i:2"><s>Weak vision</s><i class="arw"></i><span>Today's AI models, depth cameras and edge compute</span></div>
+      <div class="wr" style="--i:3"><s>Selling the robot</s><i class="arw"></i><span>Sold as a service; Tully carries the risk</span></div>
     </div>
-    <a class="deep" href="paper.html#competition">Who has tried, in the white paper</a>
+    <a class="deep" href="paper.html#competition">Learn more about who tried</a>
   </div></div>
 </section>
 
 <!-- 10 -->
 <section class="sc" id="validation" data-shot="validation" data-name="Validation">
   <div class="wrap"><div class="panel wide">
-    <span class="eyebrow"><b>10</b> · Validation from the field</span>
+    <span class="eyebrow"><b>10</b> · Validation</span>
     <h2 class="hv">Farmers are <em>ready</em> to use Tully</h2>
-    <blockquote>“Even if you can only automate one part of my manual work, the machine would run right now in my fields.”<cite>Grower, interviewed by Tully</cite></blockquote>
-    <div class="facts three" data-scrub>
-      <div><b><span class="num" data-to="30">30</span>+</b><span>conversations with farmers, cooperatives, market experts and research centres</span></div>
-      <div><b>1.5–120<small>ha</small></b><span>from a grower in South Tyrol to a farm in Washington</span></div>
-      <div><b><span class="num" data-to="100">100</span><small>%</small></b><span>of the farmers we spoke to committed to field tests in their own orchards</span></div>
-    </div>
-    <p class="k">What Tully means for a farmer</p>
-    <div class="gains" data-scrub>
-      <div style="--i:0"><b>On request</b><span>Book the blocks and dates you need</span></div>
+    <p class="talks"><b><span class="num" data-to="30">30</span>+</b> conversations with farmers</p>
+    <div class="wins" data-scrub>
+      <div style="--i:0"><b>On demand</b><span>Available when the fruit is ready</span>
+        <p class="cal" aria-hidden="true"><i></i><i></i><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i></i><i></i><i></i><i></i><i class="on" style="--k:3"></i><i class="on" style="--k:4"></i><i></i><i></i><i></i></p></div>
       <div style="--i:1"><b>0 €</b><span>No upfront investment</span></div>
-      <div style="--i:2"><b>2×</b><span>A hectare in 3.3 days, not 7.4</span></div>
-      <div style="--i:3"><b>0 h</b><span>No supervision needed</span></div>
-      <div style="--i:4"><b>−10 %</b><span>Cheaper than an assisted platform</span></div>
+      <div style="--i:2"><b>−10 %</b><span>Cheaper per hectare than picking by hand on a platform</span></div>
+      <div style="--i:3"><b>0 h</b><span>No extra time to organise or supervise</span>
+        <ul id="chores" data-scrub><li>Recruiting</li><li>Housing</li><li>Transport</li><li>Paperwork</li><li>Supervision</li></ul></div>
     </div>
-    <a class="deep" href="paper.html#validation">Validation in the white paper</a>
+    <blockquote>“Even if you can only automate one part of my manual work, the machine would run right now in my fields.”<cite>Grower, interviewed by Tully</cite></blockquote>
+    <a class="deep" href="paper.html#validation">Hear more from the field</a>
   </div></div>
 </section>
 
 <!-- 11 -->
-<section class="sc end" id="end" data-shot="end" data-name="Night shift">
+<section class="sc end" id="end" data-shot="end" data-name="Live count">
   <div class="wrap"><div class="panel">
-    <span class="eyebrow">Night shift</span>
-    <h2 class="hv">It keeps <em>picking</em> after dark</h2>
-    <p class="lead">Work lights and a light in every hand: that is how one machine reaches 20 operating hours a day.</p>
     <p class="tally" id="tally" hidden>While you read this, the machine behind the text picked <b id="tally-n">0</b> apples.</p>
     <div class="ctas">
       <a class="cta" href="paper.html">Read the full white paper</a>
       <a class="cta ghost" href="paper.html#technology">Open the simulation lab</a>
     </div>
-    <p class="fine">The orchard on this page is the Tully simulation model, running live in your browser. Figures are from the white paper.</p>
   </div></div>
 </section>
 </main>
 
 <div class="ticker" id="ticker" hidden><i></i><span>Live simulation</span><b id="ticker-n">0</b><span>apples picked since you arrived</span></div>
 
-<script src="assets/sim.349770fa.js"></script>
-<script src="assets/story.7087b54f.js"></script>
+<script src="assets/sim.5b3ea69c.js"></script>
+<script src="assets/sets.e9bd47f7.js"></script>
+<script src="assets/story.cb8eda95.js"></script>
 </body>
 </html>

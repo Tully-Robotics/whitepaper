@@ -127,7 +127,7 @@ vercel dev                                         # http://localhost:3000, runs
 | `scripts/migrate.mjs` | the migration runner (`npm run db:*`) |
 | `package.json` | `@neondatabase/serverless` at runtime, `pg` for migrations |
 | `.github/workflows/` | deploy on push; production pushes run the migrations first |
-| `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
+| `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story, `sets.*` for the story's other scenes: pickers in the orchard, the machine assembling, the globe, the hub valley). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
 | `vendor/three-0.128.0/` | three.js r128, MIT licence included, served from this site |
 | `img/` | renders and diagrams |
 | `fonts/` | self-hosted web fonts with their licences (SIL OFL) |
