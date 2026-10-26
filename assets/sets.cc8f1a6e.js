@@ -142,17 +142,87 @@ function Build(){
   const sheet=new T.Mesh(new T.PlaneGeometry(2.5,2.6),new T.MeshBasicMaterial({color:new T.Color(ACC),transparent:true,opacity:.08,depthWrite:false,side:T.DoubleSide,fog:false}));
   sheet.rotation.x=-Math.PI/2; fr.add(sheet);
   let car=null;
-  return {g,
+  // build heights of the three modules, the frame at y (hidden below 0), and how far the bin carrier has driven in (qc)
+  function pose(hb,ha,hl,qc,y,now){
+    PL.base.constant=hb; PL.arms.constant=ha; PL.line.constant=hl;
+    const H=E.H.position; fr.visible=y>0&&y<3.7; fr.position.set(H.x,Math.max(.01,y),H.z);
+    fm.opacity=.9*(1-ss(3.2,3.7,y)); fr.scale.setScalar(1+.02*Math.sin(now/120));
+    // the bin carrier drives into the tunnel last
+    car=E.CARS.find(c=>c.mode==='docked')||null;
+    if(car){ car.g.visible=qc>.001; car.g.position.x-=E.DIR*6*(1-qc); } }
+  return {g,pose,
     enter(){ g.visible=true; for(const c of E.H.children){ if(c.isLight) continue; clip(c,arms.includes(c)?'arms':line.includes(c)?'line':'base'); } },
     exit(){ g.visible=false; unclip(); if(car){ car.g.visible=true; car=null; } },
     update(dt,now,p){
-      const hb=lerp(-.05,3.8,ss(0,.42,p)), ha=lerp(.15,3.6,ss(.4,.66,p)), hl=lerp(.1,2.6,ss(.64,.9,p)), qc=ss(.62,.98,p);
-      PL.base.constant=hb; PL.arms.constant=ha; PL.line.constant=hl;
-      const H=E.H.position, y=p<.42?hb:p<.66?ha:p<.9?hl:-1; fr.visible=y>0&&y<3.7; fr.position.set(H.x,Math.max(.01,y),H.z);
-      fm.opacity=.9*(1-ss(3.2,3.7,y)); fr.scale.setScalar(1+.02*Math.sin(now/120));
-      // the bin carrier drives into the tunnel last
-      car=E.CARS.find(c=>c.mode==='docked')||null;
-      if(car){ car.g.visible=qc>.001; car.g.position.x-=E.DIR*6*(1-qc); } }};
+      const hb=lerp(-.05,3.8,ss(0,.42,p)), ha=lerp(.15,3.6,ss(.4,.66,p)), hl=lerp(.1,2.6,ss(.64,.9,p));
+      pose(hb,ha,hl,ss(.62,.98,p),p<.42?hb:p<.66?ha:p<.9?hl:-1,now); }};
+}
+
+// ================================================================== roadmap: one platform, evolving, behind the seven years
+// First the live machine as the thinning robot: base and arms only, among small green fruitlets. Then the fruit line and the bin
+// carrier build onto it and the fruit ripens: today's harvester. Then the camera climbs, and neighbouring orchard blocks appear
+// with a fleet working their alleys. e runs 0 → 1 while the roadmap chapter scrolls by.
+function Evolve(build){
+  const g=new T.Group(); g.visible=false; scene.add(g);
+  const ROW=E.ROW, XMAX=E.ROW_END-1.6;
+  // ---- the fleet machine: a snapshot of the whole machine and its docked bin carrier, merged by material (a few draw calls)
+  const snap=(()=>{ const byMat=new Map(), m=new T.Matrix4(); E.H.updateMatrixWorld(true); const inv=new T.Matrix4().copy(E.H.matrixWorld).invert();
+    const take=root=>{ root.updateMatrixWorld(true); root.traverse(o=>{ if(!o.isMesh||o.isInstancedMesh||Array.isArray(o.material)) return;
+      for(let a=o;a;a=a.parent) if(!a.visible) return;
+      if(!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const sc=o.getWorldScale(V());
+      if(o.geometry.boundingSphere.radius*Math.max(sc.x,sc.y,sc.z)<.05) return;                      // screws, fingers and lenses: lost at this distance
+      const src=o.geometry.index?o.geometry.toNonIndexed():o.geometry, n=new T.BufferGeometry(), P=src.getAttribute('position');
+      n.setAttribute('position',P.clone()); if(src.getAttribute('normal')) n.setAttribute('normal',src.getAttribute('normal').clone()); else n.computeVertexNormals();
+      n.setAttribute('uv',src.getAttribute('uv')?src.getAttribute('uv').clone():new T.Float32BufferAttribute(new Float32Array(P.count*2),2));
+      n.applyMatrix4(m.multiplyMatrices(inv,o.matrixWorld)); (byMat.get(o.material)||byMat.set(o.material,[]).get(o.material)).push(n); }); };
+    take(E.H); for(const c of E.CARS) if(c.mode==='docked') take(c.g);
+    return [...byMat].map(([mat,geos])=>[mat,T.BufferGeometryUtils.mergeBufferGeometries(geos,false)]).filter(x=>x[1]); })();
+  const fleetBot=()=>{ const r=new T.Group(); for(const [mat,geo] of snap){ const m=new T.Mesh(geo,mat); m.castShadow=false; m.receiveShadow=true; r.add(m); } g.add(r); return r; };
+  // ---- neighbouring blocks: the orchard drawn again beside ours, sharing its geometry and instances (no shadows)
+  // (not the fine parts nobody sees from up there: fruit stems, the branches under the leaves, bamboo stakes)
+  const fine=c=>c.geometry.type==='CylinderGeometry'&&c.geometry.parameters.radiusTop<.02;
+  const SRC=scene.children.filter(c=>c.parent===scene&&((c.isInstancedMesh&&!fine(c))||c.isLineSegments||(c.isMesh&&c.material&&(c.material.map===E.TEX.alley||c.material.map===E.TEX.soil))));
+  const BLOCKS=[[0,0],[0,19.5],[-71,19.5],[71,19.5],[-71,0],[71,0]];
+  // each block is drawn only when it is in view (its instances have no bounds of their own)
+  const NB=[], frustum=new T.Frustum(), pm=new T.Matrix4();
+  // the fruit there in 20 triangles instead of 80: the same from up here
+  const lowApple=(()=>{ const g2=new T.IcosahedronGeometry(.039,0); g2.scale(1,.9,1); g2.setAttribute('color',new T.Float32BufferAttribute(new Float32Array(g2.getAttribute('position').count*3).fill(1),3)); return g2; })();
+  BLOCKS.slice(1).forEach(([dx,dz])=>{ const b=new T.Group(); b.position.set(dx,0,dz); g.add(b); NB.push({b,box:new T.Box3(V(dx-36,0,dz-8),V(dx+36,4.5,dz+12.5))});
+    for(const s of SRC){ let c;
+      if(s.isInstancedMesh){ c=new T.InstancedMesh(s===E.apples?lowApple:s.geometry,s.material,s.count); c.instanceMatrix=s.instanceMatrix; if(s.instanceColor) c.instanceColor=s.instanceColor; }
+      else c=s.isLineSegments?new T.LineSegments(s.geometry,s.material):new T.Mesh(s.geometry,s.material);
+      c.position.copy(s.position); c.quaternion.copy(s.quaternion); c.scale.copy(s.scale); c.frustumCulled=false; c.castShadow=false; c.receiveShadow=true; b.add(c); }
+    for(const h of E.HL.children){ const c=h.clone(); c.castShadow=false; b.add(c); } });
+  // ---- the fleet: machines crawling their alleys, in our block (not in the live machine's alley) and in every neighbour
+  const FLEET=[];
+  function placeFleet(){ for(const f of FLEET) g.remove(f.r); FLEET.length=0;
+    BLOCKS.forEach(([dx,dz],b)=>{ const ks=b?[b%4]:[0,1,2,3].filter(k=>k!==E.ALLEY).slice(0,2);
+      ks.forEach((k,j)=>{ const r=fleetBot(), x=dx+(rnd()*2-1)*XMAX*.8; FLEET.push({r,dx,x,z:dz+E.ZK(k),dir:j%2?1:-1,wait:0}); }); }); }
+  // ---- young fruit for the thinning season
+  const ac=E.apples.instanceColor, ripe=ac?ac.array.slice():null, GREEN=[0x7f9d3c,0x8eab45,0x6f8c34].map(h=>new T.Color(h).convertSRGBToLinear());
+  let young=false;
+  function fruit(y){ if(!ac||y===young) return; young=y; const a=ac.array;
+    if(y) for(let i=0;i<a.length/3;i++){ const c=GREEN[i%3]; a[i*3]=c.r; a[i*3+1]=c.g; a[i*3+2]=c.b; } else a.set(ripe); ac.needsUpdate=true; }
+  // ---- camera: in front of the thinning robot, over its roof to the back of the harvester, then up over the blocks (machine frame)
+  const A={p:[5.4,2.1,.6],t:[0,1.55,0]}, B={p:[-6.2,3,.9],t:[0,1.3,0]}, C={p:[-30,30,-38],t:[16,1,24]};
+  const mix=(a,b,u,lift)=>({p:a.p.map((v,i)=>v+(b.p[i]-v)*u+(i===1?Math.sin(Math.PI*u)*lift:0)),t:a.t.map((v,i)=>v+(b.t[i]-v)*u)});
+  let e=0;
+  return {g,range:[-.3,.55],
+    stage:()=>e<.41?0:e<.62?1:2,
+    carsOn:()=>e>=.5,                                        // the carriers waiting and driving to the depot: harvest only
+    camAt(x){ const u1=ss(.3,.48,x), u2=ss(.62,.86,x); return u2>0?mix(B,C,u2,0):mix(A,B,u1,3.2); },
+    enter(){ build.enter(); placeFleet(); },
+    exit(){ build.exit(); fruit(false); g.visible=false; E.scene.fog.near=45; E.scene.fog.far=115; },
+    update(dt,now,x){ e=x;
+      const ql=ss(.34,.5,e), y=e>.33&&e<.5?lerp(.1,2.6,ql):-1;
+      build.pose(9,9,lerp(.1,2.6,ql),ss(.3,.48,e),y,now);
+      fruit(e<.41);
+      g.visible=e>=.6;
+      // the haze lifts as the camera climbs over the blocks
+      const u2=ss(.62,.86,e); E.scene.fog.near=lerp(45,120,u2); E.scene.fog.far=lerp(115,320,u2);
+      if(g.visible){ E.camera.updateMatrixWorld(); frustum.setFromProjectionMatrix(pm.multiplyMatrices(E.camera.projectionMatrix,E.camera.matrixWorldInverse)); for(const n of NB) n.b.visible=frustum.intersectsBox(n.box); }
+      if(g.visible) for(const f of FLEET){ if(f.wait>0){ f.wait-=dt; } else { f.x+=f.dir*.35*Math.min(dt,.05); if(Math.abs(f.x-f.dx)>XMAX){ f.x=f.dx+Math.sign(f.x-f.dx)*XMAX; f.dir*=-1; f.wait=2.5; } }
+        f.r.position.set(f.x,0,f.z); } }};
 }
 
 // ================================================================== market: a dotted globe with the apple regions
@@ -423,5 +493,6 @@ function Valley(){
     update(dt){ step(Math.min(dt,.05)); }};
 }
 
-return {workers:Workers(),build:Build(),globe:Globe(),valley:Valley()};
+const build=Build();
+return {workers:Workers(),build,evolve:Evolve(build),globe:Globe(),valley:Valley()};
 };

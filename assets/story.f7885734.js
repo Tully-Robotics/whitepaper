@@ -12,7 +12,8 @@ const world=$('world'), veil=$('veil');
 // ---------------- one camera shot per chapter, in the machine's frame: x along its travel, y up, z across the alley (m).
 // p camera, t look-at, fov, off: subject right of centre (share of the width), tod: 0 morning … 1 night,
 // vs / vf: paper wash on the text side / over everything, ts: simulation speed. still: the picture used without WebGL.
-// set: what stands in the scene (sets.js); orchard when left out. A set with its own camera (workers, globe, valley)
+// hold: how long a chapter keeps its shot before blending to the next (share of the way).
+// set: what stands in the scene (sets.js); orchard when left out. A set with camAt moves the camera itself through its chapter. A set with its own camera (workers, globe, valley)
 // takes p and t from it, in world coordinates. build: the machine assembles on a seamless floor, the camera turning at spin rad/s.
 const SHOTS={
   hero:       {p:[5.6,1.35,0.3],  t:[0,1.65,0],     fov:46, off:.21, tod:.04, vs:1,   vf:0,   ts:1.2, still:'alley'},
@@ -23,9 +24,9 @@ const SHOTS={
   hubs:       {set:'valley',                        fov:40, off:.2,  tod:.46, vs:1,   vf:0,   ts:1.5, still:'hive'},
   economics:  {p:[-4.6,3.5,0.8],  t:[0,1.1,0],      fov:42, off:.22, tod:.55, vs:1,   vf:.04, ts:1.5, still:'assisted'},
   investment: {p:[5.2,1.3,0.4],   t:[0,1.6,0],      fov:46, off:.2,  tod:.63, vs:1,   vf:.04, ts:1.2, still:'alley'},
-  roadmap:    {p:[-12,10,-10],    t:[2,0.5,0],      fov:40, off:.2,  tod:.72, vs:1,   vf:.12, ts:2,   still:'alley'},
+  roadmap:    {p:[5.4,2.1,.6],    t:[0,1.55,0],     fov:42, off:.2,  tod:.72, vs:1,   vf:.04, ts:1.5, still:'alley', set:'evolve', hold:.5},
   competition:{p:[18,2.0,0.1],    t:[0,1.6,0],      fov:22, off:.2,  tod:.81, vs:1,   vf:.1,  ts:1.5, still:'alley'},
-  validation: {p:[6,3.4,3.6],     t:[0,1.3,0],      fov:42, off:.22, tod:.93, vs:1,   vf:.06, ts:1.2, still:'night'},
+  validation: {p:[6.4,3.1,.7],     t:[0,1.4,0],      fov:42, off:.22, tod:.93, vs:1,   vf:.06, ts:1.2, still:'night'},
   end:        {p:[7.5,4.6,0.2],   t:[0,1.2,0],      fov:42, off:.2,  tod:1,   vs:.9,  vf:0,   ts:1.2, still:'night'}};
 for(const k in SHOTS){ const S=SHOTS[k]; S.set=S.set||'orchard'; if(!S.p){ S.world=true; S.p=[0,5,10]; S.t=[0,0,0]; } }
 const SH=secs.map(s=>SHOTS[s.dataset.shot]);
@@ -47,9 +48,10 @@ function fAt(y){ for(let i=0;i<NS-1;i++) if(y<anchors[i+1]) return i+clamp((y-an
 const KEYS=['fov','off','tod','vs','vf','ts'];
 function spun(S,now){ if(!S.spin) return S.p; const a=now/1000*S.spin, c=Math.cos(a), s=Math.sin(a); return [S.p[0]*c-S.p[2]*s,S.p[1],S.p[0]*s+S.p[2]*c]; }
 // a shot in world coordinates: machine-frame shots ride along with the machine
-function inWorld(S,now){ const p=spun(S,now); if(S.world) return {p:p.slice(),t:S.t.slice()};
+function inWorld(S,now){ const set=sets[S.set]; if(set&&set.camAt){ const c=set.camAt(setProgress(S.set)); S={p:c.p,t:c.t}; }
+  const p=spun(S,now); if(S.world) return {p:p.slice(),t:S.t.slice()};
   const H=E.H.position, D=E.DIR; return {p:[H.x+p[0]*D,H.y+p[1],H.z+p[2]],t:[H.x+S.t[0]*D,S.t[1],H.z+S.t[2]]}; }
-function blend(f){ const i=Math.min(NS-2,Math.floor(f)), u=f-i, w=ss(.22,.82,u), A=SH[i], B=SH[i+1], o={A,B,w};
+function blend(f){ const i=Math.min(NS-2,Math.floor(f)), u=f-i, A=SH[i], B=SH[i+1], w=A.hold?ss(A.hold,.9,u):ss(.22,.82,u), o={A,B,w};
   for(const k of KEYS) o[k]=A[k]+(B[k]-A[k])*w;
   // from one set to another: wipe to paper, swap the set while it is covered
   o.set=(w<.5?A:B).set; if(A.set!==B.set) o.vf=Math.max(o.vf,Math.pow(Math.sin(Math.PI*w),.5));
@@ -136,12 +138,37 @@ function ready(){ E=window.__E; T=window.THREE;
   const col=h=>new T.Color(h).convertSRGBToLinear();
   palette=TOD.map(k=>({k:k.k,top:col(k.top),mid:col(k.mid),bot:col(k.bot),fog:col(k.fog),sun:col(k.sun),si:k.si,hi:k.hi,ex:k.ex}));
   palette.studio={top:col(0xc9d0d4),mid:col(0xecedea)};
+  glow.lights=[]; E.H.traverse(o=>{ if(o.isSpotLight) glow.lights.push(o); }); for(const c of E.CARS) c.g.traverse(o=>{ if(o.isSpotLight) glow.lights.push(o); });
+  glow.mats=['led','ledBlue','ledGreen','beacon','screen'].map(k=>E.MAT[k]).filter(Boolean);
   try{ sets=window.__Sets(E); }catch(e){ console.error(e); sets={}; }
   for(const S of SH) if(S.world&&sets[S.set]&&sets[S.set].cam){ S.p=sets[S.set].cam.p; S.t=sets[S.set].cam.t; }
   // start a few metres into the first row and let the arms get going before anyone sees it
   window.__simHold=true; E.jumpTo(-25); let n=0;
   (function warm(){ for(let k=0;k<60;k++) E.step(0.04); if(++n<24) requestAnimationFrame(warm);
-    else { E.poseUnits(); base=E.S.binnedTot; window.__simHold=false; live=true; cam.init=false; world.classList.add('live'); $('ticker').hidden=false; $('tally').hidden=false; } })(); }
+    else { E.poseUnits(); prewarm(); base=E.S.binnedTot; window.__simHold=false; live=true; cam.init=false; world.classList.add('live'); $('ticker').hidden=false; $('tally').hidden=false; } })(); }
+// shaders compile the first time something is drawn, and that stalls the page. So draw each state the chapters will put the scene
+// in once, offscreen at 64 px: what the first chapters need before the page goes live (behind the poster), the rest one state at
+// a time while the reader is not scrolling. A real draw (not renderer.compile) also catches materials shared by plain and
+// instanced meshes, and the shadow pass. States: which carriers show, whether the machine shows, night (the work lights change
+// the light count), the build's clipped materials, and which sets' models are drawn (with everything inside them shown).
+const WARM_NOW=[{sets:['workers']},{cars:'none',machine:false,sets:['workers']},{build:true,cars:'docked',sets:['build']}];
+const warmLater=[{cars:'none',machine:false,sets:['globe']},{cars:'none',machine:false,sets:['valley']},{build:true,cars:'none',sets:['build','evolve']},
+  {build:true,sets:['build','evolve']},{night:true},{cars:'none'}];
+let warmRT=null;
+function warm(o){ const R=E.renderer, Sc=E.scene, cars=E.CARS, vis=cars.map(c=>c.g.visible), hv=E.H.visible, shown=[], culled=[];
+  warmRT=warmRT||new T.WebGLRenderTarget(64,64); warmRT.texture.encoding=T.sRGBEncoding;               // same shader keys as the canvas
+  try{
+    if(o.build&&sets.build) sets.build.enter();
+    for(const k of o.sets||[]) if(sets[k]) sets[k].g.traverse(n=>{ shown.push([n,n.visible]); n.visible=true; });
+    if(o.cars==='none') cars.forEach(c=>c.g.visible=false); else if(o.cars==='docked') cars.forEach(c=>c.g.visible=c.mode==='docked');
+    if(o.machine===false) E.H.visible=false;
+    if(o.night) E.applyNight(true);
+    Sc.traverse(n=>{ if(n.frustumCulled){ culled.push(n); n.frustumCulled=false; } });
+    R.setRenderTarget(warmRT); R.render(Sc,E.camera); }
+  catch(e){ console.error(e); }
+  finally{ R.setRenderTarget(null); culled.forEach(n=>n.frustumCulled=true); shown.forEach(([n,v])=>n.visible=v);
+    if(o.night) E.applyNight(false); cars.forEach((c,i)=>c.g.visible=vis[i]); E.H.visible=hv; if(o.build&&sets.build) sets.build.exit(); } }
+function prewarm(){ const t0=performance.now(); warm({}); WARM_NOW.forEach(warm); window.__prewarmMs=performance.now()-t0; }
 function sizeCanvas(){ const cv=E.renderer.domElement, r=cv.parentElement.getBoundingClientRect(); E.renderer.setSize(r.width,r.height,false); }
 function applySky(tod){ const P=palette; let i=0; while(i<P.length-2&&tod>P[i+1].k) i++; const a=P[i], b=P[i+1], w=clamp((tod-a.k)/(b.k-a.k),0,1);
   E.skyUni.top.value.copy(a.top).lerp(b.top,w); E.skyUni.mid.value.copy(a.mid).lerp(b.mid,w); E.skyUni.bot.value.copy(a.bot).lerp(b.bot,w);
@@ -150,13 +177,15 @@ function applySky(tod){ const P=palette; let i=0; while(i<P.length-2&&tod>P[i+1]
 // sets: orchard (the simulation as it is), workers (the orchard with people instead of the machine), build (only the
 // machine and its docked bin unit on a seamless floor), globe and valley (only their own model under the sky)
 let sets={};
+const glow={lights:[],mats:[]};
 const st={prev:new Map(),floor:null,name:'orchard'};
 const isSky=c=>!!(c.geometry&&c.geometry.type==='SphereGeometry'&&c.material&&c.material.uniforms);
 const carOf=c=>E.CARS.find(car=>car.g===c);
 // whether a scene child shows in a set (undefined: the simulation decides)
 function shows(c,name){
   if(c===st.floor) return name==='build';
-  for(const k in sets) if(sets[k].g===c) return k===name;
+  for(const k in sets) if(sets[k].g===c) return k===name||(name==='evolve'&&k==='build');
+  if(name==='evolve'){ const car=carOf(c); return car&&car.mode!=='docked'?sets.evolve.carsOn():undefined; }
   if(name==='orchard') return undefined;
   if(name==='workers') return c===E.H||carOf(c)?false:undefined;
   if(name==='build') return c===E.H||isSky(c)||!!(carOf(c)&&carOf(c).mode==='docked');
@@ -177,7 +206,8 @@ function hideFor(name){ if(name==='orchard'&&!st.prev.size) return;
     if(!st.prev.has(c)) st.prev.set(c,c.visible); c.visible=v; } }
 // a set's own progress: 0 → 1 as its chapter scrolls into place
 let fNow=0;
-const setProgress=name=>{ const ci=SH.findIndex(S=>S.set===name); return ci<0?1:clamp((fNow-(ci-.42))/.4,0,1); };
+// a set may give its own range around its chapter (evolve plays out while the tall roadmap scrolls by)
+const setProgress=name=>{ const ci=SH.findIndex(S=>S.set===name), r=(sets[name]&&sets[name].range)||[-.42,-.02]; return ci<0?1:clamp((fNow-(ci+r[0]))/(r[1]-r[0]),0,1); };
 function studioSky(){ E.skyUni.top.value.copy(palette.studio.top); E.skyUni.mid.value.copy(palette.studio.mid); E.skyUni.bot.value.copy(palette.studio.mid);
   E.scene.fog.color.copy(palette.studio.mid); E.sun.color.copy(palette[1].sun); E.sun.intensity=2.2; E.hemi.intensity=.7; E.renderer.toneMappingExposure=1; }
 // camera: eased toward the scroll-blended shot every frame, with a slow drift so it never freezes
@@ -204,22 +234,31 @@ window.__beforeRender=function(){ if(!live||!goal) return;
   // in the depth buffer from high, far shots when it stays at the simulation's 3 cm
   E.camera.near=clamp(Math.hypot(cam.p[0]-cam.t[0],cam.p[1]-cam.t[1],cam.p[2]-cam.t[2])*.015,.03,1);
   if(nar) E.camera.setViewOffset(w,h,0,h*.2,w,h); else E.camera.setViewOffset(w,h,-w*cam.off,0,w,h);
+  // work lights and glowing parts fade in with the dusk (the simulation's night switch only turns them on)
+  if(nightOn){ const k=ss(.86,.97,goal.tod); for(const L of glow.lights) L.intensity=7*k; for(const m of glow.mats) m.emissiveIntensity=(m===E.MAT.beacon?.8:1.1)+(3.2-(m===E.MAT.beacon?.8:1.1))*k; }
   E.camera.updateProjectionMatrix(); hideFor(st.name); if(st.name==='build') studioSky(); else applySky(goal.tod);
   const set=sets[st.name]; if(set) set.update(dt,now,setProgress(st.name)); };
 
 // ---------------- each frame: camera goal, bar, wash, night, and the scroll fill
+const evo=$('evo'), evoLi=evo?[...evo.querySelectorAll('li')]:[];
+if(evo&&!reduced&&webgl) evo.classList.add('live');
+let lastWarm=0;
 let lastY=-1, vel=0, lastT=performance.now(), cur=-1, nightOn=false, tsNow=1, settle=0;
 function frame(now){ const dt=Math.min(.1,(now-lastT)/1000)||.016; lastT=now;
   const y=scrollY; vel+=(Math.abs(y-lastY)/dt-vel)*Math.min(1,dt*6);
   if(y!==lastY) settle=20; lastY=y;
   const f=fAt(y); fNow=f; goal=blend(f);
+  if(evo&&live&&sets.evolve){ const k=sets.evolve.stage(); if(k!==evo._k){ evo._k=k; evoLi.forEach((li,i)=>li.classList.toggle('on',i===k)); } }
   const pr=clamp(y/maxS,0,1); $('row-bot').style.left=(pr*100)+'%'; $('row-done').style.width=(pr*100)+'%';
   const ci=Math.round(f); if(ci!==cur){ cur=ci; stopB.forEach((b,i)=>{ b.classList.toggle('cur',i===ci); b.classList.toggle('past',i<ci); });
     if(world.classList.contains('still')) $('poster').style.backgroundImage=`url(img/${SH[ci].still}.webp)`; }
   veil.style.setProperty('--vs',goal.vs.toFixed(3)); veil.style.setProperty('--vf',goal.vf.toFixed(3));
-  const night=goal.tod>.9; if(night!==nightOn){ nightOn=night; document.body.classList.toggle('night',night); if(live) setChk('night',night); }
-  if(live){ const want=goal.ts*(1+Math.min(4,vel/450)); tsNow+=(want-tsNow)*Math.min(1,dt*3); E.S.ts=tsNow; }
-  if(settle>0||now-t0<2200){ settle--; fill(now,f); }          // only while the page moves (and during the opening)
+  // night with a little hysteresis: no flicker at the threshold
+  const night=nightOn?goal.tod>.84:goal.tod>.86; if(night!==nightOn){ nightOn=night; document.body.classList.toggle('night',night); if(live) setChk('night',night); }
+  // a touch faster while the page moves; more would load the pick planner exactly when the scroll needs every frame
+  if(live){ const want=goal.ts*(1+Math.min(.3,vel/1500)); tsNow+=(want-tsNow)*Math.min(1,dt*3); E.S.ts=tsNow; }
+  if(settle>0||now-t0<2200){ settle--; fill(now,f); }
+  if(live&&warmLater.length&&settle<=0&&now-t0>2600&&now-lastWarm>300&&st.name==='orchard'){ lastWarm=now; warm(warmLater.shift()); }          // only while the page moves (and during the opening)
   requestAnimationFrame(frame); }
 
 // ---------------- live counter

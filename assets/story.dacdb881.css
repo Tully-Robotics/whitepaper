@@ -287,22 +287,17 @@ small{font-size:.5em;font-weight:600;color:var(--muted);margin-left:3px}
   .trip .round{position:static;display:block;width:auto;margin:0 0 10px;border-bottom:1.5px solid var(--ink);border-radius:8px}
   .trip li.go em{position:static;justify-self:start}
 }
-/* evolution: each stage starts as a silhouette and flashes into colour as it is reached */
-.evo{--n:3;--s:.28;display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr);align-items:stretch;gap:6px}
-.ev{display:grid;gap:3px;align-content:start;padding:12px;border-radius:10px;background:color-mix(in srgb,var(--paper) 82%,transparent);border:1px solid color-mix(in srgb,var(--ink) 12%,transparent);position:relative;overflow:hidden}
-.ev .pic{height:64px;display:flex;align-items:flex-end;margin-bottom:6px;filter:brightness(calc(var(--q)*1))}
-.ev:nth-of-type(1) .pic svg{height:44px} .ev:nth-of-type(2) .pic svg{height:54px} .ev:nth-of-type(3) .pic svg{height:64px}
-.ev svg{width:auto;overflow:visible}
-.ev .fr{fill:var(--ink)} .ev .wh{fill:var(--ink)} .ev .bn{fill:var(--leaf)} .ev .ap{fill:var(--accent)}
-.ev .arm,.ev .tool{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round} .ev .tool{stroke:var(--sky)}
-.ev::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 30% 30%,#fff,color-mix(in srgb,#fff 0%,transparent) 70%);opacity:calc(min(var(--q),1 - var(--q))*1.6)}
-.ev b{font-family:var(--display);font-size:18px;font-weight:760;opacity:calc(.3 + .7*var(--q))}
-.ev .when{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
-.ev .sz{font-family:var(--display);font-size:15px;font-weight:700;color:var(--leaf)}
-.ev>span:last-child{font-size:13.5px;line-height:1.38;color:var(--ink2);opacity:calc(.3 + .7*var(--q))}
-.evo .arr{align-self:center;height:2px;background:var(--ink);position:relative;opacity:.5}
-.evo .arr::after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:7px solid var(--ink);border-right:0}
-@media (max-width:640px){ .evo{grid-template-columns:minmax(0,1fr)} .evo .arr{width:2px;height:16px;justify-self:center} .evo .arr::after{right:-4px;top:auto;bottom:-6px;border:5px solid transparent;border-top:7px solid var(--ink);border-bottom:0} }
+/* the stage strip: names what the scene behind is showing; the current stage lights up as you scroll (all lit without WebGL) */
+.evo{margin-top:30px}
+.evo ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;counter-reset:st}
+.evo li{display:grid;gap:4px;align-content:start;padding:10px 12px 12px;border-radius:10px;background:color-mix(in srgb,var(--paper) 82%,transparent);border:1.5px solid color-mix(in srgb,var(--ink) 12%,transparent);transition:border-color .4s,opacity .4s,transform .4s;position:relative}
+.evo li::before{counter-increment:st;content:"0" counter(st);font-family:var(--mono);font-size:11px;color:var(--accent)}
+.evo li:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:8px;height:1.5px;background:color-mix(in srgb,var(--ink) 30%,transparent)}
+.evo b{font-family:var(--display);font-size:16.5px;font-weight:740;line-height:1.2}
+.evo span{font-size:13px;line-height:1.38;color:var(--ink2)}
+.evo.live li{opacity:.45}
+.evo.live li.on{opacity:1;border-color:var(--accent);transform:translateY(-3px)}
+@media (max-width:640px){ .evo ol{grid-template-columns:minmax(0,1fr)} .evo li:not(:last-child)::after{display:none} }
 
 /* competition: two lanes, each on its own stage axis (log-style); then, set apart, why they failed */
 .mat{--n:5;--s:.1;padding:14px 14px 10px;border-radius:10px;background:color-mix(in srgb,var(--paper) 82%,transparent);border:1px solid color-mix(in srgb,var(--ink) 12%,transparent)}
