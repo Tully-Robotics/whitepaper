@@ -81,6 +81,15 @@ jobs:
           api="https://api.vercel.com"; auth="Authorization: Bearer $TOKEN"
           id=$(curl -sS --fail-with-body -H "$auth" "$api/v13/deployments/${URL#https://}?teamId=$VERCEL_ORG_ID" | jq -r .id)
           [ -n "$id" ] && [ "$id" != null ] || { echo "Could not look up the deployment $URL"; exit 1; }
-          curl -sS --fail-with-body -X POST -H "$auth" -H "Content-Type: application/json" -d '{"alias":"dev.tully-robotics.com"}' \
-            "$api/v2/deployments/$id/aliases?teamId=$VERCEL_ORG_ID"
+          point() { curl -sS -o alias.json -w '%{http_code}' -X POST -H "$auth" -H "Content-Type: application/json" \
+            -d '{"alias":"dev.tully-robotics.com"}' "$api/v2/deployments/$id/aliases?teamId=$VERCEL_ORG_ID"; }
+          code=$(point)
+          # the first time, the subdomain has no certificate yet: issue one (Vercel renews it), then try again
+          if [ "$code" = 400 ] && grep -q cert_missing alias.json; then
+            curl -sS --fail-with-body -X POST -H "$auth" -H "Content-Type: application/json" -d '{"cns":["dev.tully-robotics.com"]}' \
+              "$api/v8/certs?teamId=$VERCEL_ORG_ID"; echo
+            code=$(point)
+          fi
+          cat alias.json; echo
+          [ "$code" = 200 ] || { echo "Could not point dev.tully-robotics.com at $URL (HTTP $code)"; exit 1; }
           echo "Also live at https://dev.tully-robotics.com" >> "$GITHUB_STEP_SUMMARY"
