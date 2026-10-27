@@ -70,9 +70,17 @@ jobs:
 
       # Every branch except main: dev.tully-robotics.com now shows this preview. An alias, not a project domain, so production
       # deploys never take it back. Vercel runs the DNS for tully-robotics.com, so the subdomain and its certificate come with it.
+      # Through the REST API rather than `vercel alias set`, which looks up a user for the token and fails in CI ("User not found").
       - name: Point dev.tully-robotics.com at this preview
         if: env.TARGET == 'preview'
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+          TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          test -n "${{ steps.deploy.outputs.url }}" || { echo "No deployment URL found in the deploy output"; exit 1; }
-          vercel alias set "${{ steps.deploy.outputs.url }}" dev.tully-robotics.com --token=${{ secrets.VERCEL_TOKEN }}
+          test -n "$URL" || { echo "No deployment URL found in the deploy output"; exit 1; }
+          api="https://api.vercel.com"; auth="Authorization: Bearer $TOKEN"
+          id=$(curl -sS --fail-with-body -H "$auth" "$api/v13/deployments/${URL#https://}?teamId=$VERCEL_ORG_ID" | jq -r .id)
+          [ -n "$id" ] && [ "$id" != null ] || { echo "Could not look up the deployment $URL"; exit 1; }
+          curl -sS --fail-with-body -X POST -H "$auth" -H "Content-Type: application/json" -d '{"alias":"dev.tully-robotics.com"}' \
+            "$api/v2/deployments/$id/aliases?teamId=$VERCEL_ORG_ID"
           echo "Also live at https://dev.tully-robotics.com" >> "$GITHUB_STEP_SUMMARY"
