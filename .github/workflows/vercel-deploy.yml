@@ -1,7 +1,8 @@
 name: Deploy to Vercel
 
 # main        → production (https://<your domain>), after running the database migrations
-# any branch  → preview deployment with its own URL (shown in the run summary)
+# any branch  → preview deployment with its own URL (shown in the run summary), and https://dev.tully-robotics.com
+#               then points at it: the branch pushed last is the one dev. shows
 on:
   push:
     branches: ['**']
@@ -66,3 +67,12 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "### ${TARGET^} deployment of \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "$url" >> "$GITHUB_STEP_SUMMARY"
+
+      # Every branch except main: dev.tully-robotics.com now shows this preview. An alias, not a project domain, so production
+      # deploys never take it back. Vercel runs the DNS for tully-robotics.com, so the subdomain and its certificate come with it.
+      - name: Point dev.tully-robotics.com at this preview
+        if: env.TARGET == 'preview'
+        run: |
+          test -n "${{ steps.deploy.outputs.url }}" || { echo "No deployment URL found in the deploy output"; exit 1; }
+          vercel alias set "${{ steps.deploy.outputs.url }}" dev.tully-robotics.com --token=${{ secrets.VERCEL_TOKEN }}
+          echo "Also live at https://dev.tully-robotics.com" >> "$GITHUB_STEP_SUMMARY"
