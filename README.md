@@ -117,8 +117,8 @@ vercel dev                                         # http://localhost:3000, runs
 
 | Path | What it is |
 |---|---|
-| `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is copied from `paper.html` because the simulation expects that DOM; keep the two in step |
-| `paper.html` | the full white paper, linked from every chapter of the story |
+| `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is the DOM that `sim.5b3ea69c.js` expects; keep it in step with that file |
+| `paper.html` | the full white paper (the one on `main`, where it is `index.html`), linked from every chapter of the story. It runs its own copy of the simulation, `sim.27db6302.js`, with `site.*`. The ids `problem`, `hubs` and `validation` are added for the story's links |
 | `tully-pitch-deck.pdf` | the pitch deck, downloaded from the last chapter of the story. Built from `deck/`, see below; behind the login like everything else |
 | `deck/` | the deck's source: `index.html` (twelve 16:9 slides, the story's chapters with the same figures) and JPEG copies of the photos it uses. Not deployed (`.vercelignore`) |
 | `login.html`, `admin.html` | login page, access admin (admin needs the master password) |
@@ -131,7 +131,7 @@ vercel dev                                         # http://localhost:3000, runs
 | `scripts/record-stages.mjs` | records the roadmap cards' loops `img/stage-*.mp4` and posters from the model (`npm run stages`) |
 | `package.json` | `@neondatabase/serverless` at runtime, `pg` for migrations |
 | `.github/workflows/` | deploy on push; production pushes run the migrations first; every other branch deploys a preview that https://dev.tully-robotics.com then points at (the branch pushed last wins) |
-| `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story, `sets.*` for the story's other scenes: pickers in the orchard, the machine assembling, the globe, the hub valley). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
+| `assets/` | CSS, the simulation, page scripts (`site.*` and `sim.27db6302.js` for the paper, `sim.5b3ea69c.js` and `story.*` for the story, `evo.*` for the roadmap cards and lab, `sets.*` for the story's other scenes: pickers in the orchard, the machine assembling, the globe, the hub valley). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
 | `vendor/three-0.128.0/` | three.js r128, MIT licence included, served from this site |
 | `img/` | renders and diagrams |
 | `fonts/` | self-hosted web fonts with their licences (SIL OFL) |
