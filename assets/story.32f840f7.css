@@ -294,16 +294,55 @@ small{font-size:.5em;font-weight:600;color:var(--muted);margin-left:3px}
   .trip li.go em{position:static;justify-self:start}
 }
 /* the stage strip: names what the scene behind is showing; the current stage lights up as you scroll (all lit without WebGL) */
-.evo{margin-top:22px}
-.evo .k{margin-top:0}
+.evo{margin-top:16px}
 .evo ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;counter-reset:st}
 .evo li{display:grid;gap:3px;align-content:start;padding:8px 11px 10px;border-radius:10px;background:color-mix(in srgb,var(--paper) 82%,transparent);border:1.5px solid color-mix(in srgb,var(--ink) 12%,transparent);transition:border-color .4s,opacity .4s,transform .4s;position:relative}
-.evo li::before{counter-increment:st;content:"0" counter(st);font-family:var(--mono);font-size:11px;color:var(--accent)}
+.evo b::before{counter-increment:st;content:"0" counter(st);margin-right:7px;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--accent)}
 .evo li:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:8px;height:1.5px;background:color-mix(in srgb,var(--ink) 30%,transparent)}
 .evo b{font-family:var(--display);font-size:15.5px;font-weight:740;line-height:1.2}
 .evo span{font-size:12.5px;line-height:1.35;color:var(--ink2)}
 .evo.live li{opacity:.45}
 .evo.live li.on{opacity:1;border-color:var(--accent);transform:translateY(-3px)}
+.evo.live li:hover{opacity:1}
+/* each card plays a loop of its stage, recorded from the model (evo.js); a click opens the live model in the lab below */
+.evo .mini{display:block;position:relative;width:100%;height:84px;margin:0 0 5px;padding:0;border:0;border-radius:7px;overflow:hidden;background:var(--sunk);cursor:pointer}
+.evo .mini video{display:block;width:100%;height:100%;object-fit:cover}
+.evo .mini span{position:absolute;right:5px;bottom:5px;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:9.5px;line-height:1.5;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);background:color-mix(in srgb,var(--ink) 78%,transparent);transition:background .2s}
+.evo .mini:hover span,.evo .mini:focus-visible span{background:var(--accent);color:#fff}
+
+/* ---------------- the lab: the roadmap's stages in the live model, large, with controls (a modal dialog) */
+.lab{width:min(940px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:0;border:0;border-radius:16px;background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:auto;overscroll-behavior:contain}
+.lab::backdrop{background:rgba(14,20,17,.6)}
+.lab-in{padding:18px 22px 20px}
+.lab-h{display:flex;align-items:center;gap:12px}
+.lab-h .k{flex:1;margin:0}
+.lab .x{width:34px;height:34px;flex:none;border:0;border-radius:50%;background:var(--sunk);color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+.lab .x:hover{background:var(--ink);color:var(--paper)}
+.lab .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.lab .tabs button{display:grid;gap:2px;text-align:left;padding:9px 12px;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--ink) 14%,transparent);background:none;font-family:var(--display);font-size:15.5px;font-weight:720;color:var(--ink);cursor:pointer}
+.lab .tabs small{font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.04em;color:var(--accent)}
+.lab .tabs button[aria-selected="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.lab .kitl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0 10px}
+.lab .kitl i{font-style:normal;padding:3px 10px;border-radius:999px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 30%,transparent);font-family:var(--display);font-size:13.5px;font-weight:650}
+.lab .kitl i.new{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}
+.lab .kitl b{font-family:var(--display);color:var(--muted)}
+.lab .view{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--sunk)}
+.lab .view canvas,.lab .view video{display:block;width:100%;height:100%;object-fit:cover}
+.lab .view.live canvas{cursor:grab;touch-action:none;outline:none}
+.lab .view.live canvas:active{cursor:grabbing}
+.lab .hint{position:absolute;left:10px;bottom:10px;margin:0;padding:3px 9px;border-radius:999px;background:rgba(17,26,20,.62);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#fff;pointer-events:none}
+.lab .ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:12px}
+.lab .grp{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.lab .grp>b{min-width:1.2em;text-align:center;font-family:var(--display);font-size:15px;color:var(--ink)}
+.lab .seg{display:inline-flex;padding:2px;border-radius:999px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 18%,transparent)}
+.lab .seg button,.lab .btn{border:0;padding:5px 12px;border-radius:999px;background:none;font-family:var(--display);font-size:13.5px;font-weight:650;color:var(--ink2);cursor:pointer;text-transform:none;letter-spacing:0}
+.lab .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.lab .btn{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 18%,transparent);color:var(--ink)}
+.lab .btn:hover{background:var(--ink);color:var(--paper)}
+.lab .stat{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.lab .note{max-width:none;margin:12px 0 0;font-size:15px;line-height:1.5}
+.lab .fine{margin:6px 0 0;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+@media (max-width:640px){ .lab-in{padding:14px 14px 16px} .lab .tabs button{font-size:13.5px;padding:7px 9px} .lab .stat{margin-left:0;width:100%} }
 @media (max-width:640px){ .evo ol{grid-template-columns:minmax(0,1fr)} .evo li:not(:last-child)::after{display:none} }
 
 /* competition: two lanes, each on its own stage axis (log-style); then, set apart, why they failed */
@@ -364,6 +403,7 @@ blockquote cite{display:block;margin-top:6px;font-family:var(--mono);font-style:
 .cta:hover{background:var(--accent);color:#fff}
 .cta.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 40%,transparent)}
 .cta.ghost:hover{background:var(--ink);color:var(--paper)}
+.cta.dl::after{content:"↓"}
 
 /* live counter, bottom right */
 .ticker{position:fixed;right:var(--gut);bottom:18px;z-index:6;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;

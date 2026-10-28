@@ -231,13 +231,13 @@ function hideFor(name){ if(name==='orchard'&&!st.prev.size) return;
 // a set's own progress: 0 → 1 as its chapter scrolls into place
 let fNow=0;
 // a set may give its own range around its chapter (evolve plays out while the tall roadmap scrolls by)
-const setProgress=name=>{ if(name==='evolve') return evoE; const ci=SH.findIndex(S=>S.set===name), r=(sets[name]&&sets[name].range)||[-.42,-.02]; return ci<0?1:clamp((fNow-(ci+r[0]))/(r[1]-r[0]),0,1); };
+const setProgress=name=>{ if(name==='evolve') return lab.on?LAB[lab.stage].e:evoE; const ci=SH.findIndex(S=>S.set===name), r=(sets[name]&&sets[name].range)||[-.42,-.02]; return ci<0?1:clamp((fNow-(ci+r[0]))/(r[1]-r[0]),0,1); };
 function studioSky(){ E.skyUni.top.value.copy(palette.studio.top); E.skyUni.mid.value.copy(palette.studio.mid); E.skyUni.bot.value.copy(palette.studio.mid);
   E.scene.fog.color.copy(palette.studio.mid); E.sun.color.copy(palette[1].sun); E.sun.intensity=2.2; E.hemi.intensity=.7; E.renderer.toneMappingExposure=1; }
 // camera: eased toward the scroll-blended shot every frame, with a slow drift so it never freezes
 const cam={init:false,p:[0,0,0],t:[0,0,0],fov:44,off:.2};
 let goal=null, lastFrame=performance.now();
-window.__beforeRender=function(){ if(!live||!goal) return;
+window.__beforeRender=function(){ if(live&&lab.on) return labFrame(); if(!live||!goal) return;
   const now=performance.now(), dt=Math.min(.1,(now-lastFrame)/1000); lastFrame=now; const k=cam.init?1-Math.exp(-dt*4.5):1; cam.init=true;
   const back=narrow()?1.3:1;                       // portrait: pull back so the subject fits the narrow frame
   const a=inWorld(goal.A,now), b=inWorld(goal.B,now), bw=goal.w, gp=[], gt=[];
@@ -263,6 +263,40 @@ window.__beforeRender=function(){ if(!live||!goal) return;
   E.camera.updateProjectionMatrix(); hideFor(st.name); if(st.name==='build') studioSky(); else applySky(goal.tod);
   const set=sets[st.name]; if(set) set.update(dt,now,setProgress(st.name)); };
 
+// ---------------- the lab (evo.js): the roadmap's three stages in the live model, large, in a dialog. While it is open the canvas
+// sits in the dialog, the scroll steers nothing, the evolve set holds one stage and the reader orbits the machine (the orbit rides
+// along as it crawls). Closing puts the canvas back and the scroll takes over again.
+const LAB={thin:{e:.2,near:2.2,far:16},harvest:{e:.56,near:2.2,far:16},fleet:{e:.92,near:12,far:150}};
+const lab={on:false,stage:'thin',night:false,ts:1.5,home:null,hp:null,w:0,h:0,shown:null};
+function labFrame(){ const now=performance.now(), dt=Math.min(.1,(now-lastFrame)/1000); lastFrame=now;
+  const cv=E.renderer.domElement, w=cv.clientWidth, h=cv.clientHeight, C=E.controls, H=E.H.position;
+  if(w&&h&&(w!==lab.w||h!==lab.h)){ lab.w=w; lab.h=h; E.renderer.setSize(w,h,false); E.camera.aspect=w/h; }
+  useSet('evolve');
+  if(lab.hp){ const dx=H.x-lab.hp.x, dz=H.z-lab.hp.z; E.camera.position.x+=dx; E.camera.position.z+=dz; C.target.x+=dx; C.target.z+=dz; }
+  lab.hp=H.clone();
+  const t=C.target, D=E.SUN_DIR, r=lab.stage==='fleet'?60:30;
+  E.sun.position.set(t.x+D.x*r,D.y*r,t.z+D.z*r); E.sun.target.position.set(t.x,0,t.z);
+  E.camera.clearViewOffset(); E.camera.fov=40; E.camera.near=clamp(E.camera.position.distanceTo(t)*.015,.03,1); E.camera.updateProjectionMatrix();
+  if(lab.shown!==lab.night){ lab.shown=lab.night; setChk('night',lab.night); }
+  if(lab.night){ for(const L of glow.lights) L.intensity=7; for(const m of glow.mats) m.emissiveIntensity=m===E.MAT.beacon?.8:3.2; }
+  hideFor('evolve'); applySky(lab.night?1:.45); E.S.ts=lab.ts;
+  sets.evolve.update(dt,now,LAB[lab.stage].e); }
+window.__lab={
+  ready:()=>live&&!!sets.evolve,
+  // host: the element the canvas goes into; false when there is no live model (no WebGL, reduced motion, still loading)
+  open(host,stage){ if(!live||!sets.evolve) return false; const cv=E.renderer.domElement;
+    if(!lab.home) lab.home=[cv.parentElement,cv.nextSibling]; host.prepend(cv);
+    const C=E.controls; C.enabled=true; C.enableDamping=true; C.dampingFactor=.08; C.enablePan=false; C.maxPolarAngle=1.45;
+    lab.on=true; lab.w=lab.h=0; lab.shown=null; this.stage(stage); return true; },
+  // a stage starts from the shot the roadmap uses for it, or from shot ({p, t}), in the machine's frame
+  stage(stage,shot){ lab.stage=stage; lab.hp=null; const c=inWorld(shot||{set:'evolve'},performance.now()), C=E.controls;
+    E.camera.position.set(c.p[0],c.p[1],c.p[2]); C.target.set(c.t[0],c.t[1],c.t[2]); C.minDistance=LAB[stage].near; C.maxDistance=LAB[stage].far; },
+  night(on){ lab.night=!!on; },
+  speed(x){ lab.ts=x; },
+  close(){ if(!lab.on) return; lab.on=false; const cv=E.renderer.domElement, [par,next]=lab.home; par.insertBefore(cv,next);
+    const C=E.controls; C.enabled=false; C.enableDamping=false; C.enablePan=true; C.maxPolarAngle=Math.PI; C.minDistance=.05; C.maxDistance=400;
+    setChk('night',nightOn); sizeCanvas(); const r=par.getBoundingClientRect(); E.camera.aspect=r.width/Math.max(1,r.height); cam.init=false; }};
+
 // ---------------- each frame: camera goal, bar, wash, night, and the scroll fill
 const evo=$('evo'), evoLi=evo?[...evo.querySelectorAll('li')]:[];
 if(evo&&!reduced&&webgl) evo.classList.add('live');
@@ -280,7 +314,7 @@ function frame(now){ const dt=Math.min(.1,(now-lastT)/1000)||.016; lastT=now;
   // night with a little hysteresis: no flicker at the threshold
   const night=nightOn?goal.tod>.84:goal.tod>.86; if(night!==nightOn){ nightOn=night; document.body.classList.toggle('night',night); if(live) setChk('night',night); }
   // a touch faster while the page moves; more would load the pick planner exactly when the scroll needs every frame
-  if(live){ const want=goal.ts*(1+Math.min(.3,vel/1500)); tsNow+=(want-tsNow)*Math.min(1,dt*3); E.S.ts=tsNow; }
+  if(live&&!lab.on){ const want=goal.ts*(1+Math.min(.3,vel/1500)); tsNow+=(want-tsNow)*Math.min(1,dt*3); E.S.ts=tsNow; }
   if(settle>0||now-t0<2200){ settle--; fill(now,f); }
   if(live&&warmLater.length&&settle<=0&&now-t0>2600&&now-lastWarm>300&&st.name==='orchard'){ lastWarm=now; warm(warmLater.shift()); }          // only while the page moves (and during the opening)
   requestAnimationFrame(frame); }

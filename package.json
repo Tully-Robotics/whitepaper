@@ -7,7 +7,9 @@
     "db:status": "node scripts/migrate.mjs status",
     "db:migrate": "node scripts/migrate.mjs up",
     "db:rollback": "node scripts/migrate.mjs down",
-    "db:new": "node scripts/migrate.mjs new"
+    "db:new": "node scripts/migrate.mjs new",
+    "deck": "node scripts/build-deck.mjs",
+    "stages": "node scripts/record-stages.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.2.0"

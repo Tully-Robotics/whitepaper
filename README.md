@@ -119,12 +119,16 @@ vercel dev                                         # http://localhost:3000, runs
 |---|---|
 | `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is copied from `paper.html` because the simulation expects that DOM; keep the two in step |
 | `paper.html` | the full white paper, linked from every chapter of the story |
+| `tully-pitch-deck.pdf` | the pitch deck, downloaded from the last chapter of the story. Built from `deck/`, see below; behind the login like everything else |
+| `deck/` | the deck's source: `index.html` (twelve 16:9 slides, the story's chapters with the same figures) and JPEG copies of the photos it uses. Not deployed (`.vercelignore`) |
 | `login.html`, `admin.html` | login page, access admin (admin needs the master password) |
 | `middleware.js` | the gate: checks the session cookie on every request |
 | `api/login.js`, `api/logout.js`, `api/admin.js` | sign in, sign out (`/api/logout`), admin API |
 | `lib/` | shared session and database code (not served as files) |
 | `db/migrations/` | the database schema as SQL migrations |
 | `scripts/migrate.mjs` | the migration runner (`npm run db:*`) |
+| `scripts/build-deck.mjs` | prints `deck/index.html` to `tully-pitch-deck.pdf` (`npm run deck`) |
+| `scripts/record-stages.mjs` | records the roadmap cards' loops `img/stage-*.mp4` and posters from the model (`npm run stages`) |
 | `package.json` | `@neondatabase/serverless` at runtime, `pg` for migrations |
 | `.github/workflows/` | deploy on push; production pushes run the migrations first; every other branch deploys a preview that https://dev.tully-robotics.com then points at (the branch pushed last wins) |
 | `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story, `sets.*` for the story's other scenes: pickers in the orchard, the machine assembling, the globe, the hub valley). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
@@ -132,6 +136,28 @@ vercel dev                                         # http://localhost:3000, runs
 | `img/` | renders and diagrams |
 | `fonts/` | self-hosted web fonts with their licences (SIL OFL) |
 | `vercel.json` | caching and security headers |
+
+## Roadmap stages
+
+The three cards under the roadmap (thinning robot, harvesting system, fleet) play short loops of the simulation model, `img/stage-*.mp4`. A click opens the lab dialog: the live model itself moves out from behind the page into the dialog (`window.__lab` in `story.*.js`, driven by `evo.*.js`), holds that stage, and can be orbited and zoomed, by day or night. Closing it hands the canvas back to the story. Without WebGL or with reduced motion the dialog plays the loop instead.
+
+After a change to the model or the stages, record the loops again:
+
+```bash
+npm run stages              # headless Chrome on a virtual clock, ~1 min on a Mac (GPU); ffmpeg encodes img/stage-*.mp4 and .webp
+npm run stages -- --preview # one still per stage, to check the framing (camera per stage at the top of the script)
+```
+
+## Pitch deck
+
+The story's last chapter offers `tully-pitch-deck.pdf` as a download. The PDF is built from `deck/index.html` and committed, so a deploy needs no build step.
+
+```bash
+npm run deck    # headless Chrome prints deck/index.html to tully-pitch-deck.pdf (set CHROME=... if it is not found)
+open deck/index.html    # the slides in a browser, to check a change before printing
+```
+
+When a figure changes in `index.html`, change it in `deck/index.html` too and run `npm run deck`. The deck uses JPEG copies of the renders in `deck/img/` because Chrome embeds JPEGs as they are but stores webp uncompressed (about 11 MB instead of 3 MB); after replacing a render in `img/`, re-export its JPEG copy (for example `sips -s format jpeg -s formatOptions 76 img/x.webp --out deck/img/x.jpg`).
 
 ## Search engines and crawlers
 
