@@ -113,39 +113,51 @@ vercel dev                                         # http://localhost:3000, runs
 
 `vercel dev` reads `.env` only (not `.env.local`). When there is no `.env`, it fetches the Development variables from Vercel itself. `.env*` is in `.gitignore` and `.vercelignore`, so it is never committed or deployed.
 
-## Review mode
-
-Founders comment on the site in the browser; comments sync through the dev database, and **Make the changes** sends a round to Claude in the cloud, which edits the site and pushes to `feat/automated-sandboxing`. How it works: `docs/review-loop.md`.
-
-```bash
-vercel env pull .env --environment=development   # once: the dev DATABASE_URL (see above)
-npm install && npm run db:migrate                  # once: the review tables on the dev branch
-npm run review                                     # http://localhost:8000, then click "Review" bottom left
-```
-
-**Make the changes** also needs `CLAUDE_TASK_FIRE_URL` and `CLAUDE_TASK_TOKEN` in `.env`: see `docs/claude-review-task.md`. Commenting works without them.
-
 ## Contents
 
 | Path | What it is |
 |---|---|
-| `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is copied from `paper.html` because the simulation expects that DOM; keep the two in step |
-| `paper.html` | the full white paper, linked from every chapter of the story |
+| `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is the DOM that `sim.5b3ea69c.js` expects; keep it in step with that file |
+| `paper.html` | the full white paper (the one on `main`, where it is `index.html`), linked from every chapter of the story. It runs its own copy of the simulation, `sim.27db6302.js`, with `site.*`. The ids `problem`, `hubs` and `validation` are added for the story's links |
+| `tully-pitch-deck.pdf` | the pitch deck, downloaded from the last chapter of the story. Built from `deck/`, see below; behind the login like everything else |
+| `deck/` | the deck's source: `index.html` (twelve 16:9 slides, the story's chapters with the same figures) and JPEG copies of the photos it uses. Not deployed (`.vercelignore`) |
 | `login.html`, `admin.html` | login page, access admin (admin needs the master password) |
 | `middleware.js` | the gate: checks the session cookie on every request |
 | `api/login.js`, `api/logout.js`, `api/admin.js` | sign in, sign out (`/api/logout`), admin API |
 | `lib/` | shared session and database code (not served as files) |
 | `db/migrations/` | the database schema as SQL migrations |
 | `scripts/migrate.mjs` | the migration runner (`npm run db:*`) |
-| `review/` | review mode (`npm run review`): the local server, the in-page tools and Claude's answers per round. Not deployed |
-| `docs/` | how the review loop works, and the setup of the Claude cloud task. Not deployed |
+| `scripts/build-deck.mjs` | prints `deck/index.html` to `tully-pitch-deck.pdf` (`npm run deck`) |
+| `scripts/record-stages.mjs` | records the roadmap cards' loops `img/stage-*.mp4` and posters from the model (`npm run stages`) |
 | `package.json` | `@neondatabase/serverless` at runtime, `pg` for migrations |
-| `.github/workflows/` | deploy on push; production pushes run the migrations first |
-| `assets/` | CSS, the simulation, page scripts (`site.*` for the paper, `story.*` for the story). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
+| `.github/workflows/` | deploy on push; production pushes run the migrations first; every other branch deploys a preview that https://dev.tully-robotics.com then points at (the branch pushed last wins) |
+| `assets/` | CSS, the simulation, page scripts (`site.*` and `sim.27db6302.js` for the paper, `sim.5b3ea69c.js` and `story.*` for the story, `evo.*` for the roadmap cards and lab, `sets.*` for the story's other scenes: pickers in the orchard, the machine assembling, the globe, the hub valley). File names are content-hashed, so they are cached for a year: rename a file (new hash) whenever you change it. |
 | `vendor/three-0.128.0/` | three.js r128, MIT licence included, served from this site |
 | `img/` | renders and diagrams |
 | `fonts/` | self-hosted web fonts with their licences (SIL OFL) |
 | `vercel.json` | caching and security headers |
+
+## Roadmap stages
+
+The three cards under the roadmap (thinning robot, harvesting system, fleet) play short loops of the simulation model, `img/stage-*.mp4`. A click opens the lab dialog: the live model itself moves out from behind the page into the dialog (`window.__lab` in `story.*.js`, driven by `evo.*.js`), holds that stage, and can be orbited and zoomed, by day or night. Closing it hands the canvas back to the story. Without WebGL or with reduced motion the dialog plays the loop instead.
+
+After a change to the model or the stages, record the loops again:
+
+```bash
+npm run stages              # headless Chrome on a virtual clock, ~1 min on a Mac (GPU); ffmpeg encodes img/stage-*.mp4 and .webp
+npm run stages -- --preview # one still per stage, to check the framing (camera per stage at the top of the script)
+```
+
+## Pitch deck
+
+The story's last chapter offers `tully-pitch-deck.pdf` as a download. The PDF is built from `deck/index.html` and committed, so a deploy needs no build step.
+
+```bash
+npm run deck    # headless Chrome prints deck/index.html to tully-pitch-deck.pdf (set CHROME=... if it is not found)
+open deck/index.html    # the slides in a browser, to check a change before printing
+```
+
+When a figure changes in `index.html`, change it in `deck/index.html` too and run `npm run deck`. The deck uses JPEG copies of the renders in `deck/img/` because Chrome embeds JPEGs as they are but stores webp uncompressed (about 11 MB instead of 3 MB); after replacing a render in `img/`, re-export its JPEG copy (for example `sips -s format jpeg -s formatOptions 76 img/x.webp --out deck/img/x.jpg`).
 
 ## Search engines and crawlers
 

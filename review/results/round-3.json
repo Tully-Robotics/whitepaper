@@ -1,7 +1,0 @@
-{
-  "round": 3,
-  "summary": "Removed the NTU Singapore logo from Harsh Munshi's 'Previously at' row on both the story page (index.html) and the white paper (paper.html), so the two stay consistent. The Kopernikus and Motius logos remain. Check the Team chapter first.",
-  "comments": [
-    { "id": 3, "result": "done", "note": "Removed the NTU logo from the team logos row in index.html and the matching chip in paper.html; the img/logos/ntu.png file is left in place." }
-  ]
-}

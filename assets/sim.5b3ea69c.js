@@ -1965,7 +1965,10 @@ requestAnimationFrame(frame);
 
 
 window.__E={S,U,CARS,A,G,FL,BATT,TURN_STEPS,PH,setView,setGhost,setFov,applyNight,scene,renderer,sun,hemi,skyUni,H,camera,controls,SUN_DIR,jumpTo:jumpToEnd,followPos,resetAll,step,poseUnits,
- follow:()=>follow, setFollow:f=>{follow=f}, get ALLEY(){return ALLEY}, get DIR(){return DIR}, get HEAD_W(){return HEAD_W}, N_ALLEY, ZK, ROW_X0, ROW_X1, ROW_END, ROAD_Z, DEPOT_Z, BIN_CAP, CRATE_CAP, ROW};
+ follow:()=>follow, setFollow:f=>{follow=f}, get ALLEY(){return ALLEY}, get DIR(){return DIR}, get HEAD_W(){return HEAD_W}, N_ALLEY, ZK, ROW_X0, ROW_X1, ROW_END, ROAD_Z, DEPOT_Z, BIN_CAP, CRATE_CAP, ROW,
+ // for the story's other sets: shared materials and helpers, the fruit, and the machine's modules (base, arms, fruit line)
+ MAT, TEX, C, std, mk, RB, BX, CY, canvasTex, makeBin, apples, setG, NG, trees, ROWZ, HL,
+ MOD:{base:Hs, arms:[UNIT_G,sockIM,stemIM], line:[...BELTS.map(b=>b.im.parent),...ROLLERS,...FLAPS,spiralG,pocket,chuteSock,flowMesh.fresh,flowMesh.ind]}};
 window.dispatchEvent(new Event('sim-ready'));
 })();
 
