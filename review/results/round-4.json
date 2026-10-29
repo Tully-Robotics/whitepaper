@@ -1,0 +1,8 @@
+{
+  "round": 4,
+  "summary": "On the story page hero, the eyebrow now reads just \"Tully Robotics\" (\"· White paper 2026\" removed) and the first KPI card (2× as fast as hand picking, at 10 % lower cost per hectare) is gone, leaving three cards. Check the hero layout first, since the KPI row now has three items.",
+  "comments": [
+    { "id": 4, "result": "done", "note": "Removed \"· White paper 2026\" from the hero eyebrow in index.html." },
+    { "id": 5, "result": "done", "note": "Removed the whole first KPI div (2× as fast as hand picking) from the hero in index.html; paper.html left unchanged since it is not that hero block." }
+  ]
+}

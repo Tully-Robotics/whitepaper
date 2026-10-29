@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
+    "review": "node review/server.mjs",
     "db:status": "node scripts/migrate.mjs status",
     "db:migrate": "node scripts/migrate.mjs up",
     "db:rollback": "node scripts/migrate.mjs down",
