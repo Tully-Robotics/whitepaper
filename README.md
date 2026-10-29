@@ -132,7 +132,7 @@ npm run review                                     # http://localhost:8000, then
 | `index.html` | the story: the live orchard simulation fixed behind short chapters; scrolling moves the camera and the time of day, and fills each chapter (headline words, bars, figures) with the scroll position. Its hidden `#sim` block is the DOM that `sim.5b3ea69c.js` expects; keep it in step with that file |
 | `paper.html` | the full white paper (the one on `main`, where it is `index.html`), linked from every chapter of the story. It runs its own copy of the simulation, `sim.27db6302.js`, with `site.*`. The ids `problem`, `hubs` and `validation` are added for the story's links |
 | `tully-pitch-deck.pdf` | the pitch deck, downloaded from the last chapter of the story. Built from `deck/`, see below; behind the login like everything else |
-| `deck/` | the deck's source: `index.html` (twelve 16:9 slides, the story's chapters with the same figures) and JPEG copies of the photos it uses. Not deployed (`.vercelignore`) |
+| `deck/` | the deck's source: `index.html` (fourteen 16:9 slides, with the white paper's figures; yellow `tbd` marks a figure still to fill in, so do not print the PDF while one is left) and JPEG copies of the photos it uses. Not deployed (`.vercelignore`) |
 | `login.html`, `admin.html` | login page, access admin (admin needs the master password) |
 | `middleware.js` | the gate: checks the session cookie on every request |
 | `api/login.js`, `api/logout.js`, `api/admin.js` | sign in, sign out (`/api/logout`), admin API |

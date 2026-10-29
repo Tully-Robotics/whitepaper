@@ -116,7 +116,7 @@ function fill(now,f){
   chores.forEach((li,i)=>li.classList.toggle('gone',i<struck)); if(order) order.classList.toggle('on',struck>=chores.length); }
 if(!reduced) document.body.classList.add('scrubbing');
 
-// ---------------- roadmap: a road through the seven years; the little machine drives it with the scroll
+// ---------------- roadmap: a road through the years; the little machine drives it with the scroll
 const trip=$('trip'), way=trip&&trip.querySelector('.way'), done=trip&&trip.querySelector('.done'), tbot=trip&&trip.querySelector('.tbot');
 let tripLen=0, nodes=[];
 const tripLi=trip?[...trip.querySelectorAll('li')]:[];
@@ -135,9 +135,9 @@ function road(){ if(!trip) return; const R=trip.getBoundingClientRect(), W=R.wid
   const N=600, sm=[]; for(let k=0;k<=N;k++){ const q=way.getPointAtLength(tripLen*k/N); sm.push([q.x,q.y]); }
   nodeAt=nodes.map(([x,y])=>{ let best=0, bd=1e9; sm.forEach(([sx,sy],k)=>{ const d=(sx-x)**2+(sy-y)**2; if(d<bd){ bd=d; best=k; } }); return best/N; }); }
 // the machine on the road; each year lights as it is reached; the scene behind follows the year the machine has got to:
-// years 1–3 the thinning robot, the harvester built on by year 4, the climb to the fleet towards year 5
+// years 1–2 the thinning robot, the harvester built on by year 3, the climb to the fleet towards year 4 and after
 let nodeAt=[], evoE=0;
-const EVO=[[0,0],[2.55,.3],[3,.5],[3.55,.5],[3.85,.62],[4.6,.86],[6,1]];
+const EVO=[[0,0],[1.55,.3],[2,.5],[2.55,.5],[2.85,.62],[3.6,.86],[4,1]];
 function tripMove(p){ if(!tripLen) return; const L=tripLen*clamp(p,0,1), a=way.getPointAtLength(L), b=way.getPointAtLength(Math.min(tripLen,L+2));
   tbot.style.transform=`translate(${a.x}px,${a.y}px)${b.x<a.x-.3?' scaleX(-1)':''}`;
   const fr=L/tripLen; let yr=0; for(let i=0;i<nodeAt.length-1;i++) if(fr>=nodeAt[i]) yr=i+clamp((fr-nodeAt[i])/Math.max(1e-6,nodeAt[i+1]-nodeAt[i]),0,1);

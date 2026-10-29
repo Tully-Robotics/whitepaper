@@ -22,7 +22,7 @@ const tabs=[...lab.querySelectorAll('[role=tab]')], view=lab.querySelector('.vie
 const TEXT={
   thin:{kit:[['Base'],['Arms']],note:'Spring. The machine with its base and arms only, working along the row among young fruitlets. Thinning needs no fruit line and no bin, so this is the shortest way to market.'},
   harvest:{kit:[['Base'],['Arms'],['Fruit line','new'],['Bin carriers','new']],note:'Autumn. The same base and arms, plus the fruit line with its on-board sorter, and the bin carriers that take each full bin to the depot and bring an empty one.'},
-  fleet:{kit:[['Harvesters'],['Neighbouring blocks','new']],note:'From year 5. The same machines working the alleys of the neighbouring blocks, region by region.'},
+  fleet:{kit:[['Harvesters'],['Neighbouring blocks','new']],note:'From year 4. The same machines working the alleys of the neighbouring blocks, region by region.'},
 };
 const lab3d=()=>window.__lab;
 let cur=null, live3d=false, night=false, speed=1.5;

@@ -17,7 +17,7 @@ const ro=new IntersectionObserver(es=>{ for(const e of es){ if(e.isIntersecting)
 if(!reduced) document.querySelectorAll('.rv').forEach(el=>{ if(el.getBoundingClientRect().top>innerHeight){ el.classList.add('pre'); ro.observe(el); } });
 
 // ---------------- market funnel
-(function(){ const R=[['Manual work in orchards, worldwide',60,''],['Apples, worldwide',21,'lf'],['Tully obtainable market, 9 countries',4,'ac']];
+(function(){ const R=[['Manual work in orchards, worldwide',60,''],['Apples, worldwide',21,''],['Apple harvesting and thinning, worldwide',14.3,'lf'],['Tully obtainable market: apple harvesting and thinning, 9 countries',2.7,'ac']];
   $('wp-funnel').innerHTML=R.map(r=>`<div class="hb"><span>${r[0]}</span><div class="tr"><i class="${r[2]}" style="width:${(r[1]/60*100).toFixed(1)}%"></i></div><span class="v">€${r[1]} bn</span></div>`).join(''); })();
 // ---------------- Tully vs Pluk-o-Trak small multiples
 (function(){ const M=[['Harvested per day','t',7,15.9,1],['Days per hectare','days',7.4,3.3,1,1],['Cost per hectare','€',6195,5576,0,1],['Operating hours','h',10,20,0]];
@@ -54,7 +54,7 @@ $('wp-tab-o').addEventListener('keydown',e=>{ if(e.key==='ArrowLeft'){ setPlan('
 $('wp-calc-reset').addEventListener('click',()=>setPlan(plan));
 setPlan('h');
 // ---------------- allocation
-(function(){ const A=[['Team and salaries',64,'var(--accent)'],['Prototyping and field testing',16,'var(--leaf)'],['External services',10,'var(--sky)'],['Company operations',8,'var(--muted)']];
+(function(){ const A=[['Team',64,'var(--accent)'],['Prototyping and field testing',16,'var(--leaf)'],['External services',10,'var(--sky)'],['Company operations',8,'var(--muted)']];
   $('wp-stack').innerHTML=A.map(a=>`<i style="width:${a[1]}%;background:${a[2]}">${a[1]} %</i>`).join('');
   $('wp-alloc').innerHTML=A.map(a=>`<span><i style="background:${a[2]}"></i>${a[0]}</span>`).join(''); })();
 
