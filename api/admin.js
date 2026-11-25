@@ -46,6 +46,17 @@ async function handleGet(request, sql) {
     });
   }
 
+  if (view === 'waitlist-csv') {
+    const rows = await sql`select created_at, updated_at, name, contact_type, contact, hectares, country
+      from tw_waitlist order by created_at desc`;
+    const head = ['signed_up_utc', 'updated_utc', 'name', 'contact_type', 'contact', 'hectares_apples', 'country'];
+    const lines = [head.join(',')].concat(rows.map((r) =>
+      [r.created_at, r.updated_at, r.name, r.contact_type, r.contact, r.hectares, r.country].map(csvCell).join(',')));
+    return new Response(lines.join('\r\n') + '\r\n', {
+      headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': 'attachment; filename="tully-waitlist.csv"', 'cache-control': 'no-store' },
+    });
+  }
+
   const invites = await sql`select i.id, i.name, i.email, i.firm, i.note, i.created_at, i.revoked_at, i.last_seen,
       count(l.id)::int as logins, max(l.at) as last_login
     from tw_invites i left join tw_logins l on l.invite_id = i.id and l.kind = 'invite'
@@ -54,7 +65,13 @@ async function handleGet(request, sql) {
       coalesce(i.email, l.email) as email, l.country, l.city, l.invite_id
     from tw_logins l left join tw_invites i on i.id = l.invite_id order by l.at desc limit 300`;
   const [{ failed24 }] = await sql`select count(*)::int as failed24 from tw_logins where kind = 'failed' and at > now() - interval '24 hours'`;
-  return json({ invites, logins, failed24 });
+  // Kept apart so the rest of the page still loads if the waiting-list migration has not run yet.
+  let waitlist = null, waitlistError = null;
+  try {
+    waitlist = await sql`select id, created_at, updated_at, name, contact_type, contact, hectares, country
+      from tw_waitlist order by created_at desc limit 1000`;
+  } catch (e) { waitlistError = dbHint(e); }
+  return json({ invites, logins, failed24, waitlist, waitlistError });
 }
 
 export async function POST(request) {

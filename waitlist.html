@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tully · Waiting list</title>
+<meta name="description" content="Tully picks apples day and night and cuts every stem. Join the waiting list.">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta property="og:title" content="Tully · Waiting list">
+<meta property="og:description" content="Picks day and night. Cuts every stem.">
+<meta name="theme-color" content="#0b0b0a">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111a14'/%3E%3Ccircle cx='32' cy='36' r='16' fill='%23c4332b'/%3E%3Cpath d='M32 20c0-6 3-9 8-10' stroke='%235fb27a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="/img/night.webp" fetchpriority="high">
+<link rel="stylesheet" href="/assets/fonts.05b06388.css">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0b0b0a;--ink:#f2f0eb;--ink2:#a9a69f;--muted:#76736d;--rule:rgba(242,240,235,.16);--rule2:rgba(242,240,235,.38);
+  --red:#e0483d;--err:#ff7a6e;
+  --font:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --pad:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--ink);color:var(--bg)}
+
+/* hero: the render fills the screen, text sits in the dark left/bottom of it */
+.hero{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(80px,1fr) auto auto;min-height:calc(100vh - 92px);min-height:calc(100svh - 92px);position:relative;isolation:isolate}
+.media{grid-area:1/1/5/2;position:relative;overflow:hidden;z-index:-1;background:#050505}
+.media img{position:absolute;top:0;left:0;height:100%;width:140%;object-fit:cover;object-position:50% 40%;animation:settle 2.2s cubic-bezier(.2,.6,.2,1) both}
+.media::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(11,11,10,.94) 0%,rgba(11,11,10,.78) 30%,rgba(11,11,10,.15) 58%,rgba(11,11,10,0) 75%),
+  linear-gradient(0deg,var(--bg) 0%,rgba(11,11,10,.88) 24%,rgba(11,11,10,.35) 42%,rgba(11,11,10,0) 58%),
+  linear-gradient(180deg,rgba(11,11,10,.7) 0%,rgba(11,11,10,0) 16%)}
+@keyframes settle{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
+
+.nav{grid-area:1/1;display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:28px var(--pad) 0}
+.brand{font-weight:800;font-stretch:115%;font-size:22px;letter-spacing:.02em;color:var(--ink);text-decoration:none}
+.brand i{font-style:normal;color:var(--red)}
+.nav span{font-size:14px;color:var(--ink2)}
+
+h1{grid-area:3/1;margin:0;padding:0 var(--pad);font-weight:640;font-stretch:92%;font-size:clamp(44px,5.2vw,76px);line-height:.98;letter-spacing:-.028em}
+h1 span{display:block;color:var(--muted)}
+
+.join{grid-area:4/1;padding:40px var(--pad) 44px}
+form{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.35fr) minmax(0,.7fr) auto;gap:28px;align-items:end;max-width:980px}
+.f label{display:block;font-size:13px;font-weight:500;color:var(--ink2);margin:0 0 4px}
+.f input{display:block;width:100%;font:inherit;font-size:19px;font-weight:450;color:var(--ink);background:transparent;border:0;border-radius:0;
+  box-shadow:inset 0 -1px 0 var(--rule2);padding:8px 0 10px;min-height:46px;transition:box-shadow .2s}
+.f input:hover{box-shadow:inset 0 -1px 0 rgba(242,240,235,.6)}
+.f input:focus{outline:none;box-shadow:inset 0 -2px 0 var(--ink)}
+.f input[aria-invalid=true]{box-shadow:inset 0 -2px 0 var(--err)}
+.f input:-webkit-autofill{-webkit-text-fill-color:var(--ink);transition:background-color 600000s 0s,color 600000s 0s}
+.unit{position:relative}
+.unit input{padding-right:30px;font-variant-numeric:tabular-nums}
+.unit span{position:absolute;right:0;bottom:12px;font-size:15px;color:var(--muted);pointer-events:none}
+.go{font:inherit;font-size:16px;font-weight:600;color:var(--bg);background:var(--ink);border:0;border-radius:3px;height:48px;padding:0 26px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.go:hover{background:#fff}
+.go:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.go:disabled{opacity:.6;cursor:progress}
+.msg{margin:16px 0 0;font-size:13.5px;color:var(--muted);min-height:20px}
+.msg.e{color:var(--err)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.thanks{margin:0;max-width:30ch;font-size:clamp(22px,2.2vw,28px);font-weight:500;line-height:1.3;letter-spacing:-.01em;color:var(--ink2)}
+.thanks b{font-weight:600;color:var(--ink)}
+.thanks:focus{outline:none}
+
+/* spec strip */
+.specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.2fr);min-height:92px;border-top:1px solid var(--rule);padding:0 var(--pad)}
+.specs>div{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:18px 24px 18px 0}
+.specs>div+div{padding-left:24px;border-left:1px solid var(--rule)}
+.specs b{font-size:24px;font-weight:550;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.1}
+.specs b small{font-size:15px;font-weight:500;color:var(--ink2);margin-left:3px}
+.specs span{font-size:13px;color:var(--muted)}
+.specs .legal{align-items:flex-end;text-align:right;font-size:13px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){.media img{animation:none}}
+
+/* tablet and phone: the render on top, the form below it on black */
+@media (max-width:1000px){
+  .hero{min-height:0;grid-template-rows:auto minmax(46svh,1fr) auto auto}
+  .media{grid-area:1/1/4/2}
+  .media img{width:100%;object-position:50% 45%}
+  .media::after{background:linear-gradient(0deg,var(--bg) 0%,rgba(11,11,10,.55) 30%,rgba(11,11,10,0) 60%),linear-gradient(180deg,rgba(11,11,10,.65) 0%,rgba(11,11,10,0) 22%)}
+  h1{padding-bottom:4px}
+  .join{padding:32px var(--pad) 40px}
+  form{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px 24px}
+  .go{grid-column:1/-1}
+}
+@media (max-width:760px){
+  .nav{padding-top:20px}
+  .nav span{font-size:13px}
+  h1{font-size:clamp(38px,11vw,52px)}
+  .join{padding:28px var(--pad) 36px}
+  form{grid-template-columns:minmax(0,1fr);gap:20px}
+  .go{width:100%;height:52px;margin-top:6px}
+  .specs{grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
+  .specs>div{padding:16px 12px 16px var(--pad)}
+  .specs>div+div{padding-left:12px}
+  .specs b{font-size:20px}
+  .specs b small{font-size:13px}
+  .specs span{font-size:12px}
+  .specs .legal{grid-column:1/-1;flex-direction:row;justify-content:space-between;border-left:0;border-top:1px solid var(--rule);padding:16px var(--pad);text-align:left;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="media"><img src="/img/night.webp" width="1600" height="900" alt="Simulation render of the Tully harvester picking apples at night, robotic arms reaching into the trees on both sides of the row" fetchpriority="high"></div>
+  <header class="nav"><a class="brand" href="/waitlist">TULLY<i>.</i></a><span>Waiting list</span></header>
+  <h1>Picks day and night.<span>Cuts every stem.</span></h1>
+
+  <section class="join" aria-label="Join the waiting list">
+    <form id="f" novalidate>
+      <div class="f"><label for="name">Name</label><input type="text" id="name" name="name" autocomplete="name" maxlength="120" required></div>
+      <div class="f"><label for="contact">Email or phone</label><input type="text" id="contact" name="contact" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="200" required></div>
+      <div class="f"><label for="ha">Apple orchard</label><div class="unit"><input type="text" id="ha" name="hectares" inputmode="decimal" autocomplete="off" maxlength="12" required aria-describedby="haUnit"><span id="haUnit">ha</span></div></div>
+      <div class="hp" aria-hidden="true"><label for="website">Website</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
+      <button class="go" type="submit" id="go">Join the waiting list</button>
+    </form>
+    <p class="msg" id="msg" role="status" aria-live="polite">We only use your details to contact you about Tully.</p>
+    <p class="thanks" id="thanks" tabindex="-1" hidden></p>
+  </section>
+</div>
+
+<footer class="specs">
+  <div><b>8</b><span>robotic arms</span></div>
+  <div><b>20<small>h</small></b><span>of picking a day</span></div>
+  <div><b>3.3<small>days</small></b><span>per hectare, vs 7.4 by hand</span></div>
+  <div class="legal"><span>© <span id="yr">2026</span> Tully Robotics</span><span>Image: simulation</span></div>
+</footer>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var form=$('f'),msg=$('msg'),go=$('go'),name=$('name'),contact=$('contact'),ha=$('ha');
+  var NOTE=msg.textContent,LABEL=go.textContent;
+  $('yr').textContent=new Date().getFullYear();
+
+  // Same rules as lib/waitlist.js on the server.
+  function okContact(v){
+    if(v.indexOf('@')>=0)return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+    var d=v.replace(/\D/g,'');return /^\+?[\d\s().\/-]+$/.test(v)&&d.length>=6&&d.length<=15;
+  }
+  function hectares(v){var s=String(v).trim().replace(/\s/g,'').replace(',','.');return /^\d+(\.\d+)?$/.test(s)?Number(s):NaN}
+
+  function say(text,isErr,el){
+    msg.textContent=text||NOTE;msg.className='msg'+(isErr?' e':'');
+    [name,contact,ha].forEach(function(x){x.removeAttribute('aria-invalid')});
+    if(el){el.setAttribute('aria-invalid','true');el.focus()}
+  }
+  [name,contact,ha].forEach(function(x){x.addEventListener('input',function(){if(x.hasAttribute('aria-invalid'))say()})});
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var c=contact.value.trim(),h=hectares(ha.value);
+    if(!name.value.trim())return say('Please enter your name.',true,name);
+    if(!c)return say('Please enter your email address or phone number.',true,contact);
+    if(!okContact(c))return say('That email address or phone number does not look right. For a phone number, include the country code.',true,contact);
+    if(!(h>0)||h>100000)return say('Please enter your apple area in hectares, for example 12 or 4.5.',true,ha);
+    say();
+    go.disabled=true;go.textContent='Sending…';
+    fetch('/api/waitlist',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',
+      body:JSON.stringify({name:name.value.trim(),contact:c,hectares:ha.value.trim(),website:$('website').value})})
+      .then(function(r){return r.json().catch(function(){return {ok:false,error:'Unexpected response ('+r.status+'). Please try again.'}})})
+      .then(function(j){
+        if(j&&j.ok){
+          var first=name.value.trim().split(/\s+/)[0];
+          var t=$('thanks');t.textContent='';
+          var b=document.createElement('b');b.textContent='You’re on the list, '+first+'.';
+          t.appendChild(b);t.appendChild(document.createTextNode(' We’ll be in touch before Tully comes to your orchard.'));
+          form.hidden=true;msg.hidden=true;t.hidden=false;t.focus({preventScroll:true});
+          return;
+        }
+        say((j&&j.error)||'Something went wrong. Please try again.',true,{name:name,contact:contact,hectares:ha}[j&&j.field]);
+      })
+      .catch(function(){say('Network error. Please check your connection and try again.',true)})
+      .then(function(){go.disabled=false;go.textContent=LABEL});
+  });
+})();
+</script>
+</body>
+</html>
