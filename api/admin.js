@@ -48,7 +48,7 @@ async function handleGet(request, sql) {
 
   if (view === 'waitlist-csv') {
     const rows = await sql`select created_at, updated_at, name, contact_type, contact, hectares, country
-      from tw_farm_waitlist order by created_at desc`;
+      from tw_waitlist order by created_at desc`;
     const head = ['signed_up_utc', 'updated_utc', 'name', 'contact_type', 'contact', 'hectares_apples', 'country'];
     const lines = [head.join(',')].concat(rows.map((r) =>
       [r.created_at, r.updated_at, r.name, r.contact_type, r.contact, r.hectares, r.country].map(csvCell).join(',')));
@@ -69,7 +69,7 @@ async function handleGet(request, sql) {
   let waitlist = null, waitlistError = null;
   try {
     waitlist = await sql`select id, created_at, updated_at, name, contact_type, contact, hectares, country
-      from tw_farm_waitlist order by created_at desc limit 1000`;
+      from tw_waitlist order by created_at desc limit 1000`;
   } catch (e) { waitlistError = dbHint(e); }
   return json({ invites, logins, failed24, waitlist, waitlistError });
 }

@@ -41,7 +41,7 @@ jobs:
       - name: Migrate database
         if: env.TARGET == 'production'
         # The database URL is a Sensitive Vercel variable, which vercel pull leaves empty; never block the deploy on it.
-        # The waiting-list API creates its own table if this step could not run.
+        # If it could not run, apply pending migrations by hand (README, Migrations) before relying on new tables.
         continue-on-error: true
         run: |
           npm ci --no-audit --no-fund

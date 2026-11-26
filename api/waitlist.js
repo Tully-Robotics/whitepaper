@@ -26,49 +26,25 @@ export async function POST(request) {
   let sql;
   try { sql = db(); } catch { return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.', reason: 'no-database-url' }, 503); }
 
-  const save = async () => {
-    const [{ n }] = await sql`select count(*)::int as n from tw_farm_waitlist where ip_hash = ${ipHash} and updated_at > now() - interval '1 hour'`;
-    if (n >= MAX_PER_HOUR) return json({ ok: false, error: 'Too many sign-ups from this connection. Please try again later.' }, 429);
-
-    const e = v.entry;
-    // Signing up again with the same email or phone updates the entry instead of adding a duplicate.
-    await sql`insert into tw_farm_waitlist (name, contact, contact_type, hectares, country, ip_hash)
-      values (${e.name}, ${e.contact}, ${e.contactType}, ${e.hectares}, ${country}, ${ipHash})
-      on conflict (contact) do update set name = excluded.name, contact_type = excluded.contact_type, hectares = excluded.hectares,
-        country = coalesce(excluded.country, tw_farm_waitlist.country), ip_hash = excluded.ip_hash, updated_at = now()`;
-    return null;
-  };
+  const userAgent = String(h.get('user-agent') || '').slice(0, 300) || null;
+  const e = v.entry;
 
   try {
-    let res;
-    try { res = await save(); } catch (err) {
-      if (err?.code !== '42P01') throw err;
-      // Table missing: the deploy pipeline cannot reach the database (its URL is a Sensitive Vercel variable),
-      // so the first sign-up creates it. Same schema as db/migrations/20261124120000_add_waitlist.sql.
-      await ensureTable(sql);
-      res = await save();
-    }
-    if (res) return res;
+    const [{ n }] = await sql`select count(*)::int as n from tw_waitlist where ip_hash = ${ipHash} and updated_at > now() - interval '1 hour'`;
+    if (n >= MAX_PER_HOUR) return json({ ok: false, error: 'Too many sign-ups from this connection. Please try again later.' }, 429);
+
+    // Signing up again with the same email or phone updates the entry instead of adding a duplicate.
+    await sql`insert into tw_waitlist (name, contact, contact_type, hectares, country, ip_hash, user_agent)
+      values (${e.name}, ${e.contact}, ${e.contactType}, ${e.hectares}, ${country}, ${ipHash}, ${userAgent})
+      on conflict (contact) do update set name = excluded.name, contact_type = excluded.contact_type, hectares = excluded.hectares,
+        country = coalesce(excluded.country, tw_waitlist.country), ip_hash = excluded.ip_hash,
+        user_agent = excluded.user_agent, updated_at = now()`;
   } catch (err) {
+    // 42P01 / 42703: the table or a column is missing, i.e. db/migrations has not been applied (npm run db:migrate).
     console.error('waitlist insert failed', err);
     return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.', reason: String(err?.code || err?.name || 'unknown').slice(0, 40) }, 503);
   }
   return json({ ok: true });
-}
-
-async function ensureTable(sql) {
-  await sql`create table if not exists tw_farm_waitlist (
-    id           bigserial primary key,
-    name         text not null,
-    contact      text not null unique,
-    contact_type text not null check (contact_type in ('email', 'phone')),
-    hectares     numeric(10, 2) not null check (hectares > 0),
-    country      text,
-    ip_hash      text,
-    created_at   timestamptz not null default now(),
-    updated_at   timestamptz not null default now())`;
-  await sql`create index if not exists tw_farm_waitlist_created on tw_farm_waitlist (created_at desc)`;
-  await sql`create index if not exists tw_farm_waitlist_ip on tw_farm_waitlist (ip_hash, updated_at)`;
 }
 
 export function GET() {
