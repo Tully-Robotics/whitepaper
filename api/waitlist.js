@@ -24,7 +24,7 @@ export async function POST(request) {
   const country = String(h.get('x-vercel-ip-country') || '').slice(0, 8) || null;
 
   let sql;
-  try { sql = db(); } catch { return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.' }, 503); }
+  try { sql = db(); } catch { return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.', reason: 'no-database-url' }, 503); }
 
   const save = async () => {
     const [{ n }] = await sql`select count(*)::int as n from tw_waitlist where ip_hash = ${ipHash} and updated_at > now() - interval '1 hour'`;
@@ -51,7 +51,7 @@ export async function POST(request) {
     if (res) return res;
   } catch (err) {
     console.error('waitlist insert failed', err);
-    return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.' }, 503);
+    return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.', reason: String(err?.code || err?.name || 'unknown').slice(0, 40) }, 503);
   }
   return json({ ok: true });
 }
