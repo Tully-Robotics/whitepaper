@@ -36,6 +36,14 @@ jobs:
       - name: Pull Vercel project settings
         run: vercel pull --yes --environment=$TARGET --token=${{ secrets.VERCEL_TOKEN }}
 
+      # Production only: apply pending database migrations with the credentials vercel pull just fetched.
+      # Previews skip this so a PR can never change the production database.
+      - name: Migrate database
+        if: env.TARGET == 'production'
+        run: |
+          npm ci --no-audit --no-fund
+          node scripts/migrate.mjs up --env .vercel/.env.production.local
+
       - name: Build
         run: vercel build $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }}
 
