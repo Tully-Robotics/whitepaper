@@ -79,7 +79,7 @@ button:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
     fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:pw}),credentials:'same-origin'})
       .then(function(r){return r.json().catch(function(){return {ok:false,error:'Unexpected response ('+r.status+').'}})})
       .then(function(j){
-        if(j&&j.ok){if(location.pathname==='/login.html')location.replace(admin?'/admin':'/');else location.reload();return}
+        if(j&&j.ok){if(location.pathname==='/login.html')location.replace(admin?'/admin':'/whitepaper');else location.reload();return}
         show((j&&j.error)||'Sign-in failed.');$('pw').select();done();
       })
       .catch(function(){show('Network error. Please check your connection and try again.');done()});

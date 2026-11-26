@@ -1,12 +1,13 @@
 // Vercel Routing Middleware: runs on the server before any file is served, including cached static files.
-// Nothing on the site is reachable without a valid signed session cookie, except the login page, the waiting-list
-// page (with its sign-up API and its one image), fonts and robots.txt.
+// The home page (/) is the public waiting list. The white paper lives at /whitepaper and, like everything else,
+// needs a valid signed session cookie; only the login page, the waiting list (its API and one image), fonts and
+// robots.txt are public.
 import { neon } from '@neondatabase/serverless';
 import { readSession, secrets, masterTag, clearCookie } from './lib/auth.js';
 
 export const config = { matcher: '/:path*', runtime: 'nodejs' };
 
-const PUBLIC = [/^\/login\.html$/, /^\/api\/(login|logout|waitlist)$/, /^\/waitlist(\.html)?$/, /^\/img\/night\.webp$/,
+const PUBLIC = [/^\/$/, /^\/login\.html$/, /^\/api\/(login|logout|waitlist)$/, /^\/waitlist(\.html)?$/, /^\/img\/night\.webp$/,
   /^\/fonts\//, /^\/assets\/fonts\.[0-9a-f]+\.css$/, /^\/robots\.txt$/, /^\/favicon\.ico$/];
 const NOINDEX = { 'x-robots-tag': 'noindex, nofollow, noarchive', 'cache-control': 'private, no-store' };
 
@@ -27,9 +28,9 @@ export default async function middleware(request) {
   if (PUBLIC.some((r) => r.test(path))) {
     if (path === '/login.html' && session) {
       const s = await readSession(request.headers.get('cookie'), session);
-      if (s && !url.searchParams.has('admin')) return Response.redirect(new URL('/', url), 303);
+      if (s && !url.searchParams.has('admin')) return Response.redirect(new URL('/whitepaper', url), 303);
     }
-    if (path === '/waitlist') return rewrite(new URL('/waitlist.html', url));
+    if (path === '/' || path === '/waitlist') return rewrite(new URL('/waitlist.html', url));
     return next(path.startsWith('/api/') || path === '/login.html' ? NOINDEX : {});
   }
   if (path.startsWith('/api/')) return next(NOINDEX); // functions check the session themselves
@@ -63,6 +64,7 @@ export default async function middleware(request) {
 
   if (ok) {
     if (path === '/admin') return rewrite(new URL('/admin.html', url), NOINDEX);
+    if (path === '/whitepaper') return rewrite(new URL('/index.html', url), { 'x-robots-tag': 'noindex, nofollow, noarchive' });
     return next(adminPage ? NOINDEX : { 'x-robots-tag': 'noindex, nofollow, noarchive' });
   }
   if (isPage(path)) {

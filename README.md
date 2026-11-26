@@ -13,7 +13,7 @@ Static white-paper site behind a login gate, deployed on Vercel from GitHub (`.g
 ## Waiting list
 
 - `/waitlist` is public: no password. Farmers leave their name, an email address or phone number (one field; anything with an @ counts as email), and their hectares of apples. Signing up is their statement of interest.
-- `api/waitlist.js` saves each sign-up in the `tw_waitlist` table. Signing up again with the same email or phone updates that entry instead of adding a second one. A hidden honeypot field drops bots, and one connection can send at most 30 sign-ups an hour.
+- `api/waitlist.js` saves each sign-up in the `tw_farm_waitlist` table. Signing up again with the same email or phone updates that entry instead of adding a second one. A hidden honeypot field drops bots, and one connection can send at most 30 sign-ups an hour.
 - The sign-ups show at the bottom of `/admin`, with the total hectares and a CSV export.
 - Besides the page and its API, only `img/night.webp` (the image on the page) is public; everything else stays behind the login.
 

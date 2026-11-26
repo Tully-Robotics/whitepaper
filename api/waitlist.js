@@ -27,15 +27,15 @@ export async function POST(request) {
   try { sql = db(); } catch { return json({ ok: false, error: 'Sign-up is unavailable right now. Please try again shortly.', reason: 'no-database-url' }, 503); }
 
   const save = async () => {
-    const [{ n }] = await sql`select count(*)::int as n from tw_waitlist where ip_hash = ${ipHash} and updated_at > now() - interval '1 hour'`;
+    const [{ n }] = await sql`select count(*)::int as n from tw_farm_waitlist where ip_hash = ${ipHash} and updated_at > now() - interval '1 hour'`;
     if (n >= MAX_PER_HOUR) return json({ ok: false, error: 'Too many sign-ups from this connection. Please try again later.' }, 429);
 
     const e = v.entry;
     // Signing up again with the same email or phone updates the entry instead of adding a duplicate.
-    await sql`insert into tw_waitlist (name, contact, contact_type, hectares, country, ip_hash)
+    await sql`insert into tw_farm_waitlist (name, contact, contact_type, hectares, country, ip_hash)
       values (${e.name}, ${e.contact}, ${e.contactType}, ${e.hectares}, ${country}, ${ipHash})
       on conflict (contact) do update set name = excluded.name, contact_type = excluded.contact_type, hectares = excluded.hectares,
-        country = coalesce(excluded.country, tw_waitlist.country), ip_hash = excluded.ip_hash, updated_at = now()`;
+        country = coalesce(excluded.country, tw_farm_waitlist.country), ip_hash = excluded.ip_hash, updated_at = now()`;
     return null;
   };
 
@@ -57,7 +57,7 @@ export async function POST(request) {
 }
 
 async function ensureTable(sql) {
-  await sql`create table if not exists tw_waitlist (
+  await sql`create table if not exists tw_farm_waitlist (
     id           bigserial primary key,
     name         text not null,
     contact      text not null unique,
@@ -67,8 +67,8 @@ async function ensureTable(sql) {
     ip_hash      text,
     created_at   timestamptz not null default now(),
     updated_at   timestamptz not null default now())`;
-  await sql`create index if not exists tw_waitlist_created on tw_waitlist (created_at desc)`;
-  await sql`create index if not exists tw_waitlist_ip on tw_waitlist (ip_hash, updated_at)`;
+  await sql`create index if not exists tw_farm_waitlist_created on tw_farm_waitlist (created_at desc)`;
+  await sql`create index if not exists tw_farm_waitlist_ip on tw_farm_waitlist (ip_hash, updated_at)`;
 }
 
 export function GET() {

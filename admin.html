@@ -76,7 +76,7 @@ section{margin-bottom:20px}
 </style>
 </head>
 <body>
-<header class="bar"><div class="wrap"><a class="brand" href="/">TULLY<i>.</i></a><span class="tag">Access admin</span><a href="/">Open the white paper</a><a href="/api/logout">Sign out</a></div></header>
+<header class="bar"><div class="wrap"><a class="brand" href="/">TULLY<i>.</i></a><span class="tag">Access admin</span><a href="/whitepaper">Open the white paper</a><a href="/api/logout">Sign out</a></div></header>
 <main class="wrap">
   <h1>Who can read the white paper</h1>
   <p class="sub">Create a personal password for each person you send the link to. Revoking one locks that person out on their next page load. The master password always works and is the only way into this page.</p>
@@ -189,7 +189,7 @@ section{margin-bottom:20px}
   function load(){return api('GET').then(function(j){data=j;showErr('');render()}).catch(function(e){showErr(e.message)})}
   function message(name,pw){
     var first=(name||'').split(' ')[0]||'there';
-    return 'Hi '+first+',\n\nHere is your personal access to the Tully Robotics white paper:\n\n'+location.origin+'/\nPassword: '+pw+'\n\nOpen the link and enter the password. It is for you only, so please do not forward it.\n\nBest regards,\n';
+    return 'Hi '+first+',\n\nHere is your personal access to the Tully Robotics white paper:\n\n'+location.origin+'/whitepaper\nPassword: '+pw+'\n\nOpen the link and enter the password. It is for you only, so please do not forward it.\n\nBest regards,\n';
   }
   function showPw(name,pw){$('outFor').textContent=name;$('outPw').textContent=pw;$('outMsg').value=message(name,pw);$('out').hidden=false;$('out').scrollIntoView({block:'nearest',behavior:'smooth'})}
   function act(kind,i){
