@@ -70,6 +70,8 @@ td .m{color:var(--muted);font-size:13px;display:block}
 .head h2{margin:0}
 .err{background:var(--accent-tint);color:var(--accent-ink);border-radius:6px;padding:10px 12px;margin:0 0 14px}
 .empty{color:var(--muted);padding:14px 0}
+.wls{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.04em;color:var(--muted);margin-left:8px}
+.head .acts{gap:16px}
 section{margin-bottom:20px}
 </style>
 </head>
@@ -113,6 +115,10 @@ section{margin-bottom:20px}
   <section class="card" aria-labelledby="h-log">
     <div class="head"><h2 id="h-log">Sign-ins</h2><a href="/api/admin?view=csv">Download CSV</a></div>
     <div class="tw"><table><thead><tr><th>Time</th><th>Person</th><th>Firm</th><th>Email</th><th>Result</th><th>Location</th></tr></thead><tbody id="tLog"></tbody></table></div>
+  </section>
+  <section class="card" aria-labelledby="h-wl">
+    <div class="head"><h2 id="h-wl">Waiting list <span class="wls" id="wlSum"></span></h2><span class="acts"><a href="/waitlist" target="_blank" rel="noopener">Open the sign-up page</a><a href="/api/admin?view=waitlist-csv">Download CSV</a></span></div>
+    <div class="tw"><table><thead><tr><th>Signed up</th><th>Name</th><th>Contact</th><th>Apples</th><th>Country</th></tr></thead><tbody id="tWl"></tbody></table></div>
   </section>
 </main>
 <script>
@@ -165,6 +171,19 @@ section{margin-bottom:20px}
       tr.appendChild(res);
       tr.appendChild(el('td',null,[l.city,l.country].filter(Boolean).join(', ')||'—'));
       tl.appendChild(tr);
+    });
+    var wl=data.waitlist||[],tw=$('tWl');tw.textContent='';
+    var ha=wl.reduce(function(s,w){return s+Number(w.hectares||0)},0);
+    $('wlSum').textContent=wl.length?wl.length+(wl.length===1?' farm · ':' farms · ')+ha.toLocaleString(undefined,{maximumFractionDigits:1})+' ha':'';
+    if(!wl.length){var tr3=el('tr');var td3=el('td','empty',data.waitlistError||'Nobody has signed up yet.');td3.colSpan=5;tr3.appendChild(td3);tw.appendChild(tr3)}
+    wl.forEach(function(w){
+      var tr=el('tr');
+      tr.appendChild(el('td','n',when(w.created_at)));
+      tr.appendChild(el('td',null,w.name));
+      var c=el('td');var a=el('a',null,w.contact);a.href=(w.contact_type==='phone'?'tel:':'mailto:')+w.contact;c.appendChild(a);tr.appendChild(c);
+      tr.appendChild(el('td','n',Number(w.hectares).toLocaleString(undefined,{maximumFractionDigits:2})+' ha'));
+      tr.appendChild(el('td',null,w.country||'—'));
+      tw.appendChild(tr);
     });
   }
   function load(){return api('GET').then(function(j){data=j;showErr('');render()}).catch(function(e){showErr(e.message)})}

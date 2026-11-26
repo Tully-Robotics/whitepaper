@@ -1,6 +1,6 @@
 # Tully White Paper website
 
-Static white-paper site behind a login gate, deployed on Vercel from GitHub (`.github/workflows/vercel-deploy.yml`).
+Static white-paper site behind a login gate, deployed on Vercel from GitHub (`.github/workflows/vercel-deploy.yml`), plus a public waiting-list page for farmers at `/waitlist`.
 
 ## How access works
 
@@ -9,6 +9,13 @@ Static white-paper site behind a login gate, deployed on Vercel from GitHub (`.g
 - The **master password** always works and is the only way into `/admin`.
 - On `/admin` you create a personal password per person, see every sign-in (CSV export), revoke a password or issue a new one. Revoking takes effect on that person's next page load.
 - No password is in the frontend. Invite passwords are stored only as SHA-256 hashes, and raw IP addresses are never stored (a salted hash is kept for rate limiting: 8 failed attempts per 15 minutes per IP).
+
+## Waiting list
+
+- `/waitlist` is public: no password. Farmers leave their name, an email address or phone number (one field; anything with an @ counts as email), and their hectares of apples. Signing up is their statement of interest.
+- `api/waitlist.js` saves each sign-up in the `tw_waitlist` table. Signing up again with the same email or phone updates that entry instead of adding a second one. A hidden honeypot field drops bots, and one connection can send at most 30 sign-ups an hour.
+- The sign-ups show at the bottom of `/admin`, with the total hectares and a CSV export.
+- Besides the page and its API, only `img/night.webp` (the image on the page) is public; everything else stays behind the login.
 
 ## One-time setup with the CLI
 
@@ -119,8 +126,10 @@ vercel dev                                         # http://localhost:3000, runs
 |---|---|
 | `index.html` | the white paper |
 | `login.html`, `admin.html` | login page, access admin (admin needs the master password) |
+| `waitlist.html` | the public waiting-list page, served at `/waitlist` |
 | `middleware.js` | the gate: checks the session cookie on every request |
 | `api/login.js`, `api/logout.js`, `api/admin.js` | sign in, sign out (`/api/logout`), admin API |
+| `api/waitlist.js` | waiting-list sign-up (public) |
 | `lib/` | shared session and database code (not served as files) |
 | `db/migrations/` | the database schema as SQL migrations |
 | `scripts/migrate.mjs` | the migration runner (`npm run db:*`) |
@@ -134,4 +143,4 @@ vercel dev                                         # http://localhost:3000, runs
 
 ## Search engines and crawlers
 
-Crawlers only ever see the login page. On top of that, every response carries `X-Robots-Tag: noindex`, the pages have a `noindex` meta tag and `robots.txt` disallows all crawlers.
+Crawlers only ever see the login page and the waiting-list page. On top of that, every response carries `X-Robots-Tag: noindex`, the pages have a `noindex` meta tag and `robots.txt` disallows all crawlers.

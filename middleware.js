@@ -1,11 +1,13 @@
 // Vercel Routing Middleware: runs on the server before any file is served, including cached static files.
-// Nothing on the site is reachable without a valid signed session cookie, except the login page, fonts and robots.txt.
+// Nothing on the site is reachable without a valid signed session cookie, except the login page, the waiting-list
+// page (with its sign-up API and its one image), fonts and robots.txt.
 import { neon } from '@neondatabase/serverless';
 import { readSession, secrets, masterTag, clearCookie } from './lib/auth.js';
 
 export const config = { matcher: '/:path*', runtime: 'nodejs' };
 
-const PUBLIC = [/^\/login\.html$/, /^\/api\/(login|logout)$/, /^\/fonts\//, /^\/assets\/fonts\.[0-9a-f]+\.css$/, /^\/robots\.txt$/, /^\/favicon\.ico$/];
+const PUBLIC = [/^\/login\.html$/, /^\/api\/(login|logout|waitlist)$/, /^\/waitlist(\.html)?$/, /^\/img\/night\.webp$/,
+  /^\/fonts\//, /^\/assets\/fonts\.[0-9a-f]+\.css$/, /^\/robots\.txt$/, /^\/favicon\.ico$/];
 const NOINDEX = { 'x-robots-tag': 'noindex, nofollow, noarchive', 'cache-control': 'private, no-store' };
 
 // Same wire format as next() / rewrite() from @vercel/functions, without the dependency.
@@ -27,6 +29,7 @@ export default async function middleware(request) {
       const s = await readSession(request.headers.get('cookie'), session);
       if (s && !url.searchParams.has('admin')) return Response.redirect(new URL('/', url), 303);
     }
+    if (path === '/waitlist') return rewrite(new URL('/waitlist.html', url));
     return next(path.startsWith('/api/') || path === '/login.html' ? NOINDEX : {});
   }
   if (path.startsWith('/api/')) return next(NOINDEX); // functions check the session themselves
