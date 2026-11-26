@@ -1,7 +1,7 @@
 -- migrate:up
 -- Waiting list: farmers who signed up on /waitlist (signing up is their statement of interest).
 -- One row per email address or phone number.
-create table if not exists tw_waitlist (
+create table if not exists tw_farm_waitlist (
   id           bigserial primary key,
   name         text not null,
   contact      text not null unique,
@@ -13,8 +13,8 @@ create table if not exists tw_waitlist (
   updated_at   timestamptz not null default now()
 );
 
-create index if not exists tw_waitlist_created on tw_waitlist (created_at desc);
-create index if not exists tw_waitlist_ip on tw_waitlist (ip_hash, updated_at);
+create index if not exists tw_farm_waitlist_created on tw_farm_waitlist (created_at desc);
+create index if not exists tw_farm_waitlist_ip on tw_farm_waitlist (ip_hash, updated_at);
 
 -- migrate:down
-drop table if exists tw_waitlist;
+drop table if exists tw_farm_waitlist;

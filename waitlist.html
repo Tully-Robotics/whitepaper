@@ -40,7 +40,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font
 .nav{grid-area:1/1;display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:28px var(--pad) 0}
 .brand{font-weight:800;font-stretch:115%;font-size:22px;letter-spacing:.02em;color:var(--ink);text-decoration:none}
 .brand i{font-style:normal;color:var(--red)}
-.nav span{font-size:14px;color:var(--ink2)}
+.nav .wp{font-size:14px;color:var(--ink2);text-decoration:none}.nav .wp:hover{color:var(--ink)}
 
 h1{grid-area:3/1;margin:0;padding:0 var(--pad);font-weight:640;font-stretch:92%;font-size:clamp(44px,5.2vw,76px);line-height:.98;letter-spacing:-.028em}
 h1 span{display:block;color:var(--muted)}
@@ -92,7 +92,7 @@ form{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.35fr) minmax(
 }
 @media (max-width:760px){
   .nav{padding-top:20px}
-  .nav span{font-size:13px}
+  .nav .wp{font-size:13px}
   h1{font-size:clamp(38px,11vw,52px)}
   .join{padding:28px var(--pad) 36px}
   form{grid-template-columns:minmax(0,1fr);gap:20px}
@@ -110,7 +110,7 @@ form{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.35fr) minmax(
 <body>
 <div class="hero">
   <div class="media"><img src="/img/night.webp" width="1600" height="900" alt="Simulation render of the Tully harvester picking apples at night, robotic arms reaching into the trees on both sides of the row" fetchpriority="high"></div>
-  <header class="nav"><a class="brand" href="/waitlist">TULLY<i>.</i></a><span>Waiting list</span></header>
+  <header class="nav"><a class="brand" href="/">TULLY<i>.</i></a><a class="wp" href="/whitepaper">White paper</a></header>
   <h1>Picks day and night.<span>Fully autonomous.</span></h1>
 
   <section class="join" aria-label="Join the waiting list">
